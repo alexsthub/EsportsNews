@@ -9,9 +9,16 @@ import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
 export default class GameListing extends React.Component {
   render() {
     return (
-      <div className="game-listing" onClick={this.props.onClick}>
-        <p>{this.props.game}</p>
-        <FontAwesomeIcon className="listing-icon" icon={faChevronRight} />
+      <div className="game-listing horizontal" onClick={this.props.onClick}>
+        <div className="horizontal align-center">
+          <img
+            className="game-logo"
+            src="/gamelogos/apex.png"
+            alt="Apex Legends Logo"
+          />
+          <p className="game-title">{this.props.game}</p>
+        </div>
+        {/* <FontAwesomeIcon className="listing-icon" icon={faChevronRight} /> */}
       </div>
     );
   }

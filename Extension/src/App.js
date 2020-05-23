@@ -1,8 +1,8 @@
-import React from "react";
+import React, { createRef } from "react";
 import "./App.css";
 
 import { CSSTransition } from "react-transition-group";
-import GameListing from "./components/GameListing";
+import GameContainer from "./components/GameContainer";
 
 const games = [
   "Apex Legends",
@@ -14,44 +14,50 @@ const games = [
   "Valorant",
 ];
 
+// TODO: Animation is choppy? Why?
+// TODO: Add different game logos to each
 export default class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      height: null,
       activeState: "primary",
     };
+    this.titleRef = createRef();
   }
 
   handleGameClick = (e) => {
+    console.log(e.target);
     this.setState({ activeState: "secondary" });
   };
 
-  render() {
-    const gameList = games.map((g) => {
-      return <GameListing key={g} game={g} onClick={this.handleGameClick} />;
-    });
+  calculateHeight = (element) => {
+    const titleHeight = this.titleRef.current.offsetHeight;
+    const height = element.offsetHeight + titleHeight + 15;
+    this.setState({ height: height });
+  };
 
+  render() {
     return (
-      <div className="App">
-        <h3>ESports News</h3>
+      <div className="App" style={{ height: this.state.height }}>
+        <h3 ref={this.titleRef}>ESports News</h3>
 
         <CSSTransition
           in={this.state.activeState === "primary"}
-          timeout={500}
+          timeout={800}
           classNames="primary"
           unmountOnExit
+          onEnter={this.calculateHeight}
         >
-          <div className="games-container">
-            <h4>Games</h4>
-            {gameList}
-          </div>
+          <GameContainer games={games} onClick={this.handleGameClick} />
         </CSSTransition>
 
         <CSSTransition
           in={this.state.activeState === "secondary"}
-          timeout={500}
+          timeout={800}
           classNames="secondary"
           unmountOnExit
+          onEnter={this.calculateHeight}
         >
           <div onClick={() => this.setState({ activeState: "primary" })}>
             <p>GO BACK</p>
