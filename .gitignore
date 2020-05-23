@@ -1,0 +1,3 @@
+./Server/node_modules
+./Extension/*.crx
+./Extension/.DS_Store
