@@ -1,0 +1,40 @@
+{
+  "manifest_version": 2,
+  "name": "Esports News",
+  "version": "0.0.1",
+  "description": "Stay up to date with the news/patch notes of your favorite games. Includes summaries.",
+  "default_locale": "en",
+  "browser_action": {
+    "default_title": "Esports News",
+    "default_popup": "index.html",
+    "default_icon": {
+      "16": "icon16.png",
+      "19": "icon19.png",
+      "48": "icon48.png",
+      "128": "icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icon16.png",
+    "19": "icon19.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
+  },
+  "permissions": [
+    "bookmarks",
+    "chrome://favicon/",
+    "clipboardRead",
+    "clipboardWrite",
+    "contextMenus",
+    "cookies",
+    "geolocation",
+    "history",
+    "idle",
+    "management",
+    "notifications",
+    "tabs",
+    "tts",
+    "ttsEngine",
+    "unlimitedStorage"
+  ]
+}
