@@ -1,14 +1,80 @@
 .App {
+  padding: 15px;
+  width: 200px;
+  overflow: hidden;
+}
+
+h3 {
+  margin-top: 0;
   text-align: center;
 }
 
-.App-header {
-  background-color: white;
-  min-height: 100vh;
+h4 {
+  margin-bottom: 0;
+}
+
+p {
+  margin: 0;
+}
+
+.game-listing {
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
+  transition: 0.3s background-color ease-in-out;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  justify-content: space-between;
   align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: black;
+}
+
+.game-listing:hover {
+  cursor: pointer;
+  background-color: lightgray;
+}
+
+.listing-icon {
+  margin-right: 15px;
+  font-size: 0.7rem;
+  transition: all 0.2s ease-in-out 0s;
+}
+
+.game-listing:hover>.listing-icon {
+  transform: translate(5px, 0px)
+}
+
+/* CSS Transitions */
+
+.primary-enter {
+  position: absolute;
+  transform: translateX(-110%);
+}
+
+.primary-enter-active {
+  transform: translateX(0%);
+  transition: all 0.5s ease;
+}
+
+.primary-exit {
+  position: absolute;
+}
+
+.primary-exit-active {
+  transform: translateX(-110%);
+  transition: all 0.5s ease;
+}
+
+.secondary-enter {
+  transform: translateX(110%);
+}
+
+.secondary-enter-active {
+  transform: translateX(0%);
+  transition: all 0.5s ease;
+}
+
+.secondary-exit {}
+
+.secondary-exit-active {
+  transform: translateX(110%);
+  transition: all 0.5s ease;
 }
