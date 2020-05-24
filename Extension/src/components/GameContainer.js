@@ -4,9 +4,15 @@ import PropTypes from "prop-types";
 import "../App.css";
 
 export default class GameContainer extends React.Component {
+  componentDidMount = () => {
+    console.log("MOUNTING");
+  };
+
   render() {
-    const gameList = this.props.games.map((g) => {
-      return <GameListing key={g} game={g} onClick={this.props.onClick} />;
+    const gameList = this.props.games.map((game) => {
+      return (
+        <GameListing key={game.name} game={game} onClick={this.props.onClick} />
+      );
     });
 
     return (

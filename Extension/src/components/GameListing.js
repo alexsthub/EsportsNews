@@ -13,10 +13,10 @@ export default class GameListing extends React.Component {
         <div className="horizontal align-center">
           <img
             className="game-logo"
-            src="/gamelogos/apex.png"
-            alt="Apex Legends Logo"
+            src={`/gamelogos/${this.props.game.src}`}
+            alt={this.props.game.alt}
           />
-          <p className="game-title">{this.props.game}</p>
+          <p className="game-title">{this.props.game.name}</p>
         </div>
         {/* <FontAwesomeIcon className="listing-icon" icon={faChevronRight} /> */}
       </div>

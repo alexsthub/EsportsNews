@@ -2,7 +2,7 @@
   padding: 15px;
   width: 200px;
   overflow: hidden;
-  transition: 0.6s height ease;
+  transition: 0.3s height ease;
 }
 
 .horizontal {
