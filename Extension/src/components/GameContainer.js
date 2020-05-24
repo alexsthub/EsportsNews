@@ -11,13 +11,17 @@ export default class GameContainer extends React.Component {
   render() {
     const gameList = this.props.games.map((game) => {
       return (
-        <GameListing key={game.name} game={game} onClick={this.props.onClick} />
+        <GameListing
+          key={game.name}
+          game={game}
+          onClick={(e, game) => this.props.onClick(e, game)}
+        />
       );
     });
 
     return (
       <div className="games-container">
-        <h4>Games</h4>
+        <h4>My Games</h4>
         {gameList}
       </div>
     );

@@ -3,39 +3,48 @@ import "./App.css";
 
 import { CSSTransition } from "react-transition-group";
 import GameContainer from "./components/GameContainer";
+import GameDetails from "./components/GameDetails";
+import SettingsCog from "./components/SettingsCog";
 
 const games = [
   {
+    id: 1,
     name: "Apex Legends",
     src: "apex.png",
     alt: "Apex Legends Logo",
   },
   {
+    id: 2,
     name: "Counter Strike: GO",
     src: "counterstrike.png",
     alt: "Counter Strike Global Offensive Logo",
   },
   {
+    id: 3,
     name: "Fortnite",
     src: "fortnite.png",
     alt: "Fortnite Logo",
   },
   {
+    id: 4,
     name: "League of Legends",
     src: "league.png",
     alt: "League of Legends Logo",
   },
   {
+    id: 5,
     name: "Legends of Runeterra",
     src: "runeterra.png",
     alt: "Legends of Runeterra Logo",
   },
   {
+    id: 6,
     name: "Team Fight Tactics",
     src: "tft.png",
     alt: "Team Fight Tactics Logo",
   },
   {
+    id: 7,
     name: "Valorant",
     src: "valorant.png",
     alt: "Valorant Logo",
@@ -48,14 +57,15 @@ export default class App extends React.Component {
     super(props);
     this.state = {
       height: null,
-      activeState: "primary",
+      selectedGame: null,
     };
     this.titleRef = createRef();
   }
 
-  handleGameClick = (e) => {
-    console.log(e.target);
-    this.setState({ activeState: "secondary" });
+  handleGameClick = (e, gameObj) => {
+    // console.log(e.target.textContent);
+    // console.log(gameObj);
+    this.setState({ selectedGame: gameObj });
   };
 
   calculateHeight = (element) => {
@@ -67,10 +77,13 @@ export default class App extends React.Component {
   render() {
     return (
       <div className="App" style={{ height: this.state.height }}>
-        <h3 ref={this.titleRef}>ESports News</h3>
+        <div style={{ position: "relative" }}>
+          <h3 ref={this.titleRef}>ESports News</h3>
+          <SettingsCog />
+        </div>
 
         <CSSTransition
-          in={this.state.activeState === "primary"}
+          in={this.state.selectedGame === null}
           timeout={600}
           classNames="primary"
           unmountOnExit
@@ -80,28 +93,17 @@ export default class App extends React.Component {
         </CSSTransition>
 
         <CSSTransition
-          in={this.state.activeState === "secondary"}
+          in={this.state.selectedGame !== null}
           timeout={600}
           classNames="secondary"
           unmountOnExit
           onEnter={this.calculateHeight}
         >
-          <Test onClick={() => this.setState({ activeState: "primary" })} />
+          <GameDetails
+            game={this.state.selectedGame}
+            goBack={() => this.setState({ selectedGame: null })}
+          />
         </CSSTransition>
-      </div>
-    );
-  }
-}
-
-class Test extends React.Component {
-  componentDidMount = () => {
-    console.log("MOUNTING TEST");
-  };
-
-  render() {
-    return (
-      <div onClick={this.props.onClick}>
-        <p>GO BACK</p>
       </div>
     );
   }

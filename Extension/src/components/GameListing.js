@@ -9,7 +9,10 @@ import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
 export default class GameListing extends React.Component {
   render() {
     return (
-      <div className="game-listing horizontal" onClick={this.props.onClick}>
+      <div
+        className="game-listing horizontal"
+        onClick={(e) => this.props.onClick(e, this.props.game)}
+      >
         <div className="horizontal align-center">
           <img
             className="game-logo"
@@ -25,6 +28,6 @@ export default class GameListing extends React.Component {
 }
 
 GameListing.propTypes = {
-  game: PropTypes.string,
+  game: PropTypes.object,
   onClick: PropTypes.func,
 };
