@@ -13,10 +13,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const puppeteer_1 = __importDefault(require("puppeteer"));
-const LeagueParser_1 = __importDefault(require("./Parsers/LeagueParser"));
-function requestPage(url) {
+const RuneterraParser_1 = __importDefault(require("./Parsers/RuneterraParser"));
+function requestPage(url, parser) {
     return __awaiter(this, void 0, void 0, function* () {
-        const browser = yield puppeteer_1.default.launch({ headless: true });
+        const browser = yield puppeteer_1.default.launch({
+            headless: true,
+        });
         const page = yield browser.newPage();
         yield page.setViewport({
             width: 1920,
@@ -24,13 +26,17 @@ function requestPage(url) {
             deviceScaleFactor: 1,
         });
         yield page.goto(url, { waitUntil: "networkidle2" });
-        let data = yield page.evaluate(LeagueParser_1.default);
+        let data = yield page.evaluate(parser);
         console.log(data);
         // TODO: Do something with the data.
         debugger;
         yield browser.close();
     });
 }
-// requestPage("https://www.ea.com/en-gb/games/apex-legends/news#news");
-requestPage("https://na.leagueoflegends.com/en-us/news/game-updates/");
+// requestPage("https://www.ea.com/en-gb/games/apex-legends/news#news", ApexParser);
+// requestPage(
+//   "https://na.leagueoflegends.com/en-us/news/game-updates/",
+//   LeagueParser
+// );
+requestPage("https://playruneterra.com/en-us/news", RuneterraParser_1.default);
 //# sourceMappingURL=scraper.js.map

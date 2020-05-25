@@ -30,7 +30,7 @@ function LeagueParser() {
         }
         return null;
     }
-    // TODO: Download the image, eventually some filtering?
+    // TODO: eventually some filtering?
     let documents = [];
     const newsList = document.getElementsByTagName("ol")[1];
     const newsCards = newsList.getElementsByTagName("a");
