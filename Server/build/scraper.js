@@ -13,7 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const puppeteer_1 = __importDefault(require("puppeteer"));
-const RuneterraParser_1 = __importDefault(require("./Parsers/RuneterraParser"));
+const FortniteParser_1 = __importDefault(require("./Parsers/FortniteParser"));
 function requestPage(url, parser) {
     return __awaiter(this, void 0, void 0, function* () {
         const browser = yield puppeteer_1.default.launch({
@@ -34,9 +34,10 @@ function requestPage(url, parser) {
     });
 }
 // requestPage("https://www.ea.com/en-gb/games/apex-legends/news#news", ApexParser);
-// requestPage(
-//   "https://na.leagueoflegends.com/en-us/news/game-updates/",
-//   LeagueParser
-// );
-requestPage("https://playruneterra.com/en-us/news", RuneterraParser_1.default);
+// requestPage("https://na.leagueoflegends.com/en-us/news/game-updates/", LeagueParser);
+// https://playhearthstone.com/en-us/news
+// https://www.epicgames.com/fortnite/en-US/news
+// requestPage("https://playruneterra.com/en-us/news", RuneterraParser);
+// requestPage("https://playruneterra.com/en-us/news", RuneterraParser);
+requestPage("https://www.epicgames.com/fortnite/en-US/news", FortniteParser_1.default);
 //# sourceMappingURL=scraper.js.map
