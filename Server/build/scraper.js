@@ -13,7 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const puppeteer_1 = __importDefault(require("puppeteer"));
-const FortniteParser_1 = __importDefault(require("./Parsers/FortniteParser"));
+const ValorantParser_1 = __importDefault(require("./Parsers/ValorantParser"));
 function requestPage(url, parser) {
     return __awaiter(this, void 0, void 0, function* () {
         const browser = yield puppeteer_1.default.launch({
@@ -39,5 +39,6 @@ function requestPage(url, parser) {
 // https://www.epicgames.com/fortnite/en-US/news
 // requestPage("https://playruneterra.com/en-us/news", RuneterraParser);
 // requestPage("https://playruneterra.com/en-us/news", RuneterraParser);
-requestPage("https://www.epicgames.com/fortnite/en-US/news", FortniteParser_1.default);
+// requestPage("https://www.epicgames.com/fortnite/en-US/news", FortniteParser);
+requestPage("https://beta.playvalorant.com/en-us/news/", ValorantParser_1.default);
 //# sourceMappingURL=scraper.js.map

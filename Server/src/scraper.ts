@@ -5,6 +5,7 @@ import LeagueParser from "./Parsers/LeagueParser";
 import RuneterraParser from "./Parsers/RuneterraParser";
 import ApexParser from "./Parsers/ApexParser";
 import FortniteParser from "./Parsers/FortniteParser";
+import ValorantParser from "./Parsers/ValorantParser";
 
 async function requestPage(url: string, parser: () => Data[]) {
   const browser: puppeteer.Browser = await puppeteer.launch({
@@ -32,4 +33,5 @@ async function requestPage(url: string, parser: () => Data[]) {
 // https://www.epicgames.com/fortnite/en-US/news
 // requestPage("https://playruneterra.com/en-us/news", RuneterraParser);
 // requestPage("https://playruneterra.com/en-us/news", RuneterraParser);
-requestPage("https://www.epicgames.com/fortnite/en-US/news", FortniteParser);
+// requestPage("https://www.epicgames.com/fortnite/en-US/news", FortniteParser);
+requestPage("https://beta.playvalorant.com/en-us/news/", ValorantParser);
