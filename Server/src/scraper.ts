@@ -11,11 +11,13 @@ import {
   OverwatchArticleDateParser,
   OverwatchPatchParser,
 } from "./Parsers/OverwatchParser";
+import CounterStrikeParser from "./Parsers/CounterStrikeParser";
 
 // !Note: Apex Parser needs to be headful to work with shadow root.
+// TODO: Why are all the dates [object, object]?
 async function requestPage(url: string, parser: () => Data[]) {
   const browser: puppeteer.Browser = await puppeteer.launch({
-    headless: false,
+    headless: true,
   });
   const page: puppeteer.Page = await browser.newPage();
   await page.setViewport({
@@ -38,7 +40,8 @@ async function requestPage(url: string, parser: () => Data[]) {
 // requestPage("https://beta.playvalorant.com/en-us/news/", ValorantParser);
 // requestPage("https://playoverwatch.com/en-us/news/patch-notes", OverwatchPatchParser);
 // requestPage("https://playoverwatch.com/en-us/news", OverwatchNewsParser);
+// requestPage("https://www.ea.com/en-gb/games/apex-legends/news#news", ApexParser);
+// requestPage("https://blog.counter-strike.net/", CounterStrikeParser);
+// requestPage("https://blog.counter-strike.net/index.php/category/updates/", CounterStrikeParser);
 
-requestPage("https://www.ea.com/en-gb/games/apex-legends/news#news", ApexParser);
 // https://playhearthstone.com/en-us/news
-// https://www.epicgames.com/fortnite/en-US/news
