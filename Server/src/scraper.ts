@@ -12,6 +12,7 @@ import {
   OverwatchPatchParser,
 } from "./Parsers/OverwatchParser";
 import CounterStrikeParser from "./Parsers/CounterStrikeParser";
+import HearthstoneParser from "./Parsers/HearthstoneParser";
 
 // !Note: Apex Parser needs to be headful to work with shadow root.
 // TODO: Why are all the dates [object, object]?
@@ -44,4 +45,4 @@ async function requestPage(url: string, parser: () => Data[]) {
 // requestPage("https://blog.counter-strike.net/", CounterStrikeParser);
 // requestPage("https://blog.counter-strike.net/index.php/category/updates/", CounterStrikeParser);
 
-// https://playhearthstone.com/en-us/news
+requestPage("https://playhearthstone.com/en-us/news", HearthstoneParser);
