@@ -12,9 +12,10 @@ import {
   OverwatchPatchParser,
 } from "./Parsers/OverwatchParser";
 
+// !Note: Apex Parser needs to be headful to work with shadow root.
 async function requestPage(url: string, parser: () => Data[]) {
   const browser: puppeteer.Browser = await puppeteer.launch({
-    headless: true,
+    headless: false,
   });
   const page: puppeteer.Page = await browser.newPage();
   await page.setViewport({
@@ -38,6 +39,6 @@ async function requestPage(url: string, parser: () => Data[]) {
 // requestPage("https://playoverwatch.com/en-us/news/patch-notes", OverwatchPatchParser);
 // requestPage("https://playoverwatch.com/en-us/news", OverwatchNewsParser);
 
-// requestPage("https://www.ea.com/en-gb/games/apex-legends/news#news", ApexParser);
+requestPage("https://www.ea.com/en-gb/games/apex-legends/news#news", ApexParser);
 // https://playhearthstone.com/en-us/news
 // https://www.epicgames.com/fortnite/en-US/news

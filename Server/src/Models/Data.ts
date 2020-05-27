@@ -5,4 +5,5 @@ export default interface Data {
   authors?: string[];
   imageUrl?: string;
   description?: string;
+  category?: string;
 }
