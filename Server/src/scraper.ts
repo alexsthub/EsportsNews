@@ -6,6 +6,11 @@ import RuneterraParser from "./Parsers/RuneterraParser";
 import ApexParser from "./Parsers/ApexParser";
 import FortniteParser from "./Parsers/FortniteParser";
 import ValorantParser from "./Parsers/ValorantParser";
+import {
+  OverwatchNewsParser,
+  OverwatchArticleDateParser,
+  OverwatchPatchParser,
+} from "./Parsers/OverwatchParser";
 
 async function requestPage(url: string, parser: () => Data[]) {
   const browser: puppeteer.Browser = await puppeteer.launch({
@@ -26,12 +31,13 @@ async function requestPage(url: string, parser: () => Data[]) {
   await browser.close();
 }
 
-// requestPage("https://www.ea.com/en-gb/games/apex-legends/news#news", ApexParser);
 // requestPage("https://na.leagueoflegends.com/en-us/news/game-updates/", LeagueParser);
-
-// https://playhearthstone.com/en-us/news
-// https://www.epicgames.com/fortnite/en-US/news
-// requestPage("https://playruneterra.com/en-us/news", RuneterraParser);
 // requestPage("https://playruneterra.com/en-us/news", RuneterraParser);
 // requestPage("https://www.epicgames.com/fortnite/en-US/news", FortniteParser);
-requestPage("https://beta.playvalorant.com/en-us/news/", ValorantParser);
+// requestPage("https://beta.playvalorant.com/en-us/news/", ValorantParser);
+// requestPage("https://playoverwatch.com/en-us/news/patch-notes", OverwatchPatchParser);
+// requestPage("https://playoverwatch.com/en-us/news", OverwatchNewsParser);
+
+// requestPage("https://www.ea.com/en-gb/games/apex-legends/news#news", ApexParser);
+// https://playhearthstone.com/en-us/news
+// https://www.epicgames.com/fortnite/en-US/news

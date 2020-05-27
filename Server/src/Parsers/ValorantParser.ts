@@ -17,7 +17,6 @@ export default function ValorantParser(): Data[] {
       "div[class^=NewsCard-module--copyContainer]"
     );
 
-    // TODO: Get image
     const link = body.href;
     const datetime = new Date(textContent.children[0].innerHTML);
     const title = textContent.children[1].innerHTML;
