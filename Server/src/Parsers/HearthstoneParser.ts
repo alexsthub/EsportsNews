@@ -1,6 +1,5 @@
 import Data from "../Models/Data";
 
-// TODO: Error somewhere
 export default function HearthstoneParser(): Data[] {
   let documents: Data[] = [];
   const parent: Element = document.querySelector("div.ContentSection");
