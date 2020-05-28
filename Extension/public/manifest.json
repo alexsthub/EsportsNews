@@ -14,6 +14,10 @@
       "128": "icons/icon128.png"
     }
   },
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": true
+  },
   "icons": {
     "16": "icons/icon16.png",
     "19": "icons/icon19.png",
@@ -32,6 +36,7 @@
     "idle",
     "management",
     "notifications",
+    "alarms",
     "tabs",
     "tts",
     "ttsEngine",
