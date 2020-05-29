@@ -23,7 +23,7 @@ CREATE TABLE if not exists articles
   imageUrl varchar(256),
   category varchar(50),
   authors varchar(100),
-  company_id int not null,
+  game_id int not null,
   date_published date not null,
   date_entered timestamp,
   FOREIGN KEY (company_id) REFERENCES games(id),
