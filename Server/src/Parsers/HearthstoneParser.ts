@@ -12,14 +12,14 @@ export default function HearthstoneParser(): Data[] {
     const imageUrl: string = article.querySelector("img").src;
     const title: string = article.querySelector("h3").innerHTML;
     const description: string = article.querySelector("p").innerHTML;
-    const datetime: Date = new Date(article.querySelector("time").innerHTML);
+    const rawDatetime: string = article.querySelector("time").innerHTML;
 
     const doc: Data = {
       title: title,
       link: link,
       imageUrl: imageUrl,
       description: description,
-      datetime: datetime,
+      rawDatetime: rawDatetime,
     };
     documents.push(doc);
   }

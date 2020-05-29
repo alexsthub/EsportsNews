@@ -42,16 +42,14 @@ export default function LeagueParser(): Data[] {
 
     const link: string = getFullUrl(card.getAttribute("href"));
     const title: string = cardInfo.getElementsByTagName("h2")[0].innerText;
-    const datetime: Date = new Date(
-      cardInfo.getElementsByTagName("time")[0].getAttribute("datetime")
-    );
+    const rawDatetime: string = cardInfo.getElementsByTagName("time")[0].getAttribute("datetime");
     const authors: string[] = getAuthors(cardInfo);
     const imageUrl: string = getImageUrl(card);
 
     const document: Data = {
       link: link,
       title: title,
-      datetime: datetime,
+      rawDatetime: rawDatetime,
       authors: authors,
       imageUrl: imageUrl,
     };

@@ -14,7 +14,6 @@ function getArticlesByGameId(gameID: number, db: MySQL.Connection, callback: Fun
   });
 }
 
-// TODO: Change date parser to moment
 function checkForNewArticles(input: Data[], existing: any): Data[] {
   // TODO: Implement logic
 
@@ -33,6 +32,7 @@ function insertArticlesToDatabase(newArticles: Data[], gameID: number, db: MySQL
   });
 }
 
+// TODO: Use moment
 function formatArticlesToInsertStatements(newArticles: Data[], gameID: number) {
   let results: any[][] = [];
 
@@ -56,7 +56,7 @@ function formatArticlesToInsertStatements(newArticles: Data[], gameID: number) {
 }
 
 (async function () {
-  const gameID: number = 5;
+  const gameID: number = 4;
   const scraper: GenericScraper = constructScraper(gameID);
   const scrapedArticles: Data[] = await scraper.scrape();
   console.log(scrapedArticles);

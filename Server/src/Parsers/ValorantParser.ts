@@ -17,15 +17,15 @@ export default function ValorantParser(): Data[] {
       "div[class^=NewsCard-module--copyContainer]"
     );
 
-    const link = body.href;
-    const datetime = new Date(textContent.children[0].innerHTML);
-    const title = textContent.children[1].innerHTML;
-    const description = textContent.children[2].innerHTML;
+    const link: string = body.href;
+    const rawDatetime: string = textContent.children[0].innerHTML;
+    const title: string = textContent.children[1].innerHTML;
+    const description: string = textContent.children[2].innerHTML;
     const imageUrl: string = getImageUrl(body);
 
     const doc = {
       link: link,
-      datetime: datetime,
+      rawDatetime: rawDatetime,
       title: title,
       description: description,
       imageUrl: imageUrl,

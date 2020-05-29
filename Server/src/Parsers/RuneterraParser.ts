@@ -16,14 +16,14 @@ export default function RuneterraParser(): Data[] {
 
     const link: string = anchor.href;
     const imageUrl: string = getImageUrl(card);
-    const title = infoDiv.getElementsByTagName("h2")[0].innerText;
-    const datetime = new Date(textList[0].innerText);
-    const description = textList[1].innerText;
+    const title: string = infoDiv.getElementsByTagName("h2")[0].innerText;
+    const rawDatetime: string = textList[0].innerText;
+    const description: string = textList[1].innerText;
 
     const doc = {
       link: link,
       title: title,
-      datetime: datetime,
+      rawDatetime: rawDatetime,
       imageUrl: imageUrl,
       description: description,
     };

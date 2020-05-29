@@ -1,10 +1,10 @@
 import Data from "../Models/Data";
 
-function OverwatchArticleDateParser(): Date {
+function OverwatchArticleDateParser(): string {
   const dateElement: Element = document.querySelector("span.publish-date");
   if (dateElement) {
-    const datetime: Date = new Date(dateElement.innerHTML);
-    return datetime;
+    const rawDatetime: string = dateElement.innerHTML;
+    return rawDatetime;
   }
   return null;
 }
@@ -47,10 +47,10 @@ function OverwatchPatchParser(): Data[] {
 
     const title: string = article.querySelector("h3").innerHTML;
     const splitString: string[] = title.split("–");
-    const datetime: Date = new Date(splitString[1].trim());
+    const rawDatetime: string = splitString[1].trim();
 
     const doc: Data = {
-      datetime: datetime,
+      rawDatetime: rawDatetime,
       title: title,
     };
 

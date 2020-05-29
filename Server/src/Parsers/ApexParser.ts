@@ -22,14 +22,14 @@ export default function ApexParser(): Data[] {
     const imageUrl: string = card.getAttribute("media");
     const link: string = getLinkUrl(card);
     const description: string = card.querySelector("ea-tile-copy").innerHTML.trim();
-    const datetime: Date = new Date(card.getAttribute("eyebrow-secondary-text"));
+    const rawDatetime: string = card.getAttribute("eyebrow-secondary-text");
 
     const doc: Data = {
       title: title,
       imageUrl: imageUrl,
       link: link,
       description: description,
-      datetime: datetime,
+      rawDatetime: rawDatetime,
     };
     documents.push(doc);
   }

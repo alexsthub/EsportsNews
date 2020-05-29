@@ -13,11 +13,11 @@ export default function CounterStrikeParser(): Data[] {
 
     const link: string = anchor.href;
     const title: string = anchor.innerHTML;
-    const datetime: Date = new Date(dateDiv.innerText.replace("-", "").trim());
+    const rawDatetime: string = dateDiv.innerText.replace("-", "").trim();
     const doc = {
       title: title,
       link: link,
-      datetime: datetime,
+      rawDatetime: rawDatetime,
     };
     documents.push(doc);
   }
