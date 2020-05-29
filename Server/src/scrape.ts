@@ -32,7 +32,6 @@ function insertArticlesToDatabase(newArticles: Data[], gameID: number, db: MySQL
   });
 }
 
-// TODO: Use moment
 function formatArticlesToInsertStatements(newArticles: Data[], gameID: number) {
   let results: any[][] = [];
 
@@ -46,13 +45,24 @@ function formatArticlesToInsertStatements(newArticles: Data[], gameID: number) {
     currentResult.push(article.category);
     currentResult.push(article.authors ? article.authors.join(",") : null);
     currentResult.push(gameID);
-    // TODO: Format date;
-    currentResult.push("ahh");
+    currentResult.push(formatDateYYYYMMDD(article.rawDatetime));
     currentResult.push("current_timestamp");
 
     results.push(currentResult);
   }
   return results;
+}
+
+function formatDateYYYYMMDD(dateString: string): string {
+  const d = new Date(dateString);
+  let month = "" + (d.getMonth() + 1);
+  let day = "" + d.getDate();
+  const year = d.getFullYear();
+
+  if (month.length < 2) month = "0" + month;
+  if (day.length < 2) day = "0" + day;
+
+  return [year, month, day].join("-");
 }
 
 (async function () {
