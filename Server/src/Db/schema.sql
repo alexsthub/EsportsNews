@@ -26,7 +26,6 @@ CREATE TABLE if not exists articles
   game_id int not null,
   date_published date not null,
   date_entered timestamp,
-  FOREIGN KEY (company_id) REFERENCES games(id),
   UNIQUE KEY(title)
 );
 
