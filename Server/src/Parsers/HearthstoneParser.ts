@@ -11,7 +11,7 @@ export default function HearthstoneParser(): Data[] {
     const link: string = article.href;
     const imageUrl: string = article.querySelector("img").src;
     const title: string = article.querySelector("h3").innerHTML;
-    const description: string = article.querySelector("p").innerHTML;
+    const description: string = article.querySelector("p").innerHTML.trim();
     const rawDatetime: string = article.querySelector("time").innerHTML;
 
     const doc: Data = {

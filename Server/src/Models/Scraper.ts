@@ -1,7 +1,6 @@
 import puppeteer from "puppeteer";
 import Data from "./Data";
 
-// TODO: Why are all the dates [object, object]?
 export default class GenericScraper {
   private url: string;
   private parser: () => Data[];

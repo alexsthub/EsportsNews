@@ -17,7 +17,7 @@ CREATE TABLE if not exists games
 CREATE TABLE if not exists articles
 (
   id int not null auto_increment primary key,
-  title varchar(64) not null,
+  title varchar(128) not null,
   description varchar(256),
   link varchar(256) not null,
   imageUrl varchar(256),

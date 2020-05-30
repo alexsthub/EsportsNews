@@ -1,23 +1,34 @@
+import MySQL from "mysql";
+import moment from "moment";
+
 import constructScraper from "./Helpers/ConstructScraper";
 import GenericScraper from "./Models/Scraper";
-import MySQL from "mysql";
 import Data from "./Models/Data";
 import db from "./db/dbConnect";
 
+// Query the most recent 30 articles to use as reference to see if they exist.
 function getArticlesByGameId(gameID: number, db: MySQL.Connection, callback: Function) {
-  db.query("SELECT * FROM articles WHERE game_id = ?", gameID, (err, result) => {
-    if (err) {
-      callback(null);
-    } else {
-      callback(result);
+  db.query(
+    "SELECT * FROM articles WHERE game_id = ? ORDER BY id limit 30",
+    gameID,
+    (err, result) => {
+      if (err) {
+        callback(null);
+      } else {
+        callback(result);
+      }
     }
-  });
+  );
 }
 
+// O(n^2) but only a max N of 30 so I'm going to say its OK.
 function checkForNewArticles(input: Data[], existing: any): Data[] {
-  // TODO: Implement logic
-
   const ret: Data[] = [];
+  input.forEach((inputObj) => {
+    const exists: boolean = existing.some((e: any) => e.title === inputObj.title);
+    if (!exists) ret.push(inputObj);
+  });
+
   return ret;
 }
 
@@ -25,10 +36,10 @@ function insertArticlesToDatabase(newArticles: Data[], gameID: number, db: MySQL
   const formattedInserts = formatArticlesToInsertStatements(newArticles, gameID);
   const queryString =
     "INSERT INTO articles (title, description, link, imageUrl, category, authors, game_id, date_published, date_entered) VALUES ?";
-  console.log(queryString);
-  db.query(queryString, formattedInserts, (err, result) => {
-    if (err) return;
-    console.log("Number of records inserted: " + result.affectedRows);
+  db.query(queryString, [formattedInserts], (err, result) => {
+    if (err) {
+      throw err;
+    }
   });
 }
 
@@ -45,15 +56,16 @@ function formatArticlesToInsertStatements(newArticles: Data[], gameID: number) {
     currentResult.push(article.category);
     currentResult.push(article.authors ? article.authors.join(",") : null);
     currentResult.push(gameID);
-    currentResult.push(formatDateYYYYMMDD(article.rawDatetime));
-    currentResult.push("current_timestamp");
+    currentResult.push(formatDate(article.rawDatetime));
+    currentResult.push(moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"));
 
     results.push(currentResult);
   }
   return results;
 }
 
-function formatDateYYYYMMDD(dateString: string): string {
+// Takes a date string and formats into YYYY-MM-DD
+function formatDate(dateString: string): string {
   const d = new Date(dateString);
   let month = "" + (d.getMonth() + 1);
   let day = "" + d.getDate();
@@ -73,8 +85,10 @@ function formatDateYYYYMMDD(dateString: string): string {
 
   getArticlesByGameId(gameID, db, (result: any) => {
     if (!result) return;
-    console.log(result);
     const newArticles = checkForNewArticles(scrapedArticles, result);
-    insertArticlesToDatabase(newArticles, gameID, db);
+    if (newArticles.length > 0) {
+      insertArticlesToDatabase(newArticles, gameID, db);
+      // TODO: Broadcast these newArticles.
+    }
   });
 })();
