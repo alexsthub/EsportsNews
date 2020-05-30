@@ -25,6 +25,11 @@ wss.on("connection", (ws: any) => {
   ws.on("pong", () => {
     ws.isAlive = true;
   });
+
+  ws.on("message", function incoming(message: any) {
+    console.log("received: %s", message);
+    ws.send(`I heard you said: ${message}`);
+  });
 });
 
 setInterval(() => {
