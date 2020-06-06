@@ -7,6 +7,14 @@ export default function ValorantParser(): Data[] {
     return imageUrl.substr(5, imageUrl.length - 7);
   }
 
+  function getCategory(title: string): string {
+    const lowerTitle: string = title.toLowerCase();
+    if (lowerTitle.includes("patch") && lowerTitle.includes("notes")) {
+      return "update";
+    }
+    return "general";
+  }
+
   let documents: Data[] = [];
   const grid: Element = document.querySelector("[class^=NewsArchive-module--content]");
   const articles: HTMLCollection = grid.children;
@@ -22,6 +30,7 @@ export default function ValorantParser(): Data[] {
     const title: string = textContent.children[1].innerHTML;
     const description: string = textContent.children[2].innerHTML;
     const imageUrl: string = getImageUrl(body);
+    const category: string = getCategory(title);
 
     const doc = {
       link: link,
@@ -29,6 +38,7 @@ export default function ValorantParser(): Data[] {
       title: title,
       description: description,
       imageUrl: imageUrl,
+      category: category,
     };
     documents.push(doc);
   }

@@ -78,7 +78,7 @@ function formatDate(dateString: string): string {
 }
 
 (async function () {
-  const gameID: number = 4;
+  const gameID: number = 1;
   const scraper: GenericScraper = constructScraper(gameID);
   const scrapedArticles: Data[] = await scraper.scrape();
   console.log(scrapedArticles);
@@ -92,3 +92,5 @@ function formatDate(dateString: string): string {
     }
   });
 })();
+
+// TODO: Work on getting the category for each parser. (News vs Updates)

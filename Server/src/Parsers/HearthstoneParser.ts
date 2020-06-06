@@ -1,6 +1,14 @@
 import Data from "../Models/Data";
 
 export default function HearthstoneParser(): Data[] {
+  function getCategory(title: string): string {
+    const lowerTitle: string = title.toLowerCase();
+    if (lowerTitle.includes("patch notes") || lowerTitle.includes("updates")) {
+      return "update";
+    }
+    return "general";
+  }
+
   let documents: Data[] = [];
   const parent: Element = document.querySelector("div.ContentSection");
   const grid: Element = parent.querySelector("div[class^=NewsHomeApp__NewsListContainer]");
@@ -13,6 +21,7 @@ export default function HearthstoneParser(): Data[] {
     const title: string = article.querySelector("h3").innerHTML;
     const description: string = article.querySelector("p").innerHTML.trim();
     const rawDatetime: string = article.querySelector("time").innerHTML;
+    const category: string = getCategory(title);
 
     const doc: Data = {
       title: title,
@@ -20,6 +29,7 @@ export default function HearthstoneParser(): Data[] {
       imageUrl: imageUrl,
       description: description,
       rawDatetime: rawDatetime,
+      category: category,
     };
     documents.push(doc);
   }

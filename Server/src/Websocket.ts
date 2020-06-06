@@ -33,6 +33,7 @@ wss.on("connection", (ws: any) => {
 });
 
 setInterval(() => {
+  console.log("PINGING");
   wss.clients.forEach((ws: any) => {
     if (!ws.isAlive) return ws.terminate();
 

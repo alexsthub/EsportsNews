@@ -7,6 +7,14 @@ export default function ApexParser(): Data[] {
     return anchor ? anchor.href : null;
   }
 
+  function getCategory(title: string): string {
+    const lowerTitle: string = title.toLowerCase();
+    if (lowerTitle.includes("patch notes") || lowerTitle.includes("update")) {
+      return "update";
+    }
+    return "general";
+  }
+
   let documents: Data[] = [];
   const grid: Element = document
     .querySelector(
@@ -23,6 +31,7 @@ export default function ApexParser(): Data[] {
     const link: string = getLinkUrl(card);
     const description: string = card.querySelector("ea-tile-copy").innerHTML.trim();
     const rawDatetime: string = card.getAttribute("eyebrow-secondary-text");
+    const category: string = getCategory(title);
 
     const doc: Data = {
       title: title,
@@ -30,6 +39,7 @@ export default function ApexParser(): Data[] {
       link: link,
       description: description,
       rawDatetime: rawDatetime,
+      category: category,
     };
     documents.push(doc);
   }

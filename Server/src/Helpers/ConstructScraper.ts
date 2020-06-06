@@ -50,7 +50,7 @@ export default function constructScraper(gameID: number): GenericScraper {
       scraper = new GenericScraper("https://playruneterra.com/en-us/news", RuneterraParser);
       break;
     case 8:
-      scraper = new GenericScraper("https://beta.playvalorant.com/en-us/news/", ValorantParser);
+      scraper = new GenericScraper("https://playvalorant.com/en-us/news/", ValorantParser);
       break;
   }
 
