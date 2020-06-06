@@ -10,6 +10,7 @@ import {
 } from "../Parsers/OverwatchParser";
 import CounterStrikeParser from "../Parsers/CounterStrikeParser";
 import HearthstoneParser from "../Parsers/HearthstoneParser";
+import TFTParser from "../Parsers/TFTParser";
 
 import GenericScraper from "../Models/Scraper";
 
@@ -51,6 +52,12 @@ export default function constructScraper(gameID: number): GenericScraper {
       break;
     case 8:
       scraper = new GenericScraper("https://playvalorant.com/en-us/news/", ValorantParser);
+      break;
+    case 9:
+      scraper = new GenericScraper(
+        "https://teamfighttactics.leagueoflegends.com/en-us/news/",
+        TFTParser
+      );
       break;
   }
 

@@ -1,6 +1,14 @@
 import Data from "../Models/Data";
 
 export default function CounterStrikeParser(): Data[] {
+  function getCategory(title: string): string {
+    const lowerTitle: string = title.toLowerCase();
+    if (lowerTitle.includes("release") && lowerTitle.includes("note")) {
+      return "update";
+    }
+    return "general";
+  }
+
   let documents: Data[] = [];
   const grid: Element = document.querySelector("div#post_container");
   const articles: NodeListOf<Element> = grid.querySelectorAll("div.inner_post");
@@ -14,10 +22,13 @@ export default function CounterStrikeParser(): Data[] {
     const link: string = anchor.href;
     const title: string = anchor.innerHTML;
     const rawDatetime: string = dateDiv.innerText.replace("-", "").trim();
-    const doc = {
+    const category: string = getCategory(title);
+
+    const doc: Data = {
       title: title,
       link: link,
       rawDatetime: rawDatetime,
+      category: category,
     };
     documents.push(doc);
   }
