@@ -40,7 +40,7 @@ export default function constructScraper(gameID: number): GenericScraper {
       break;
     case 5:
       scraper = new GenericScraper(
-        "https://na.leagueoflegends.com/en-us/news/game-updates/",
+        "https://na.leagueoflegends.com/en-us/latest-news/",
         LeagueParser
       );
       break;

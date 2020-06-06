@@ -1,57 +1,42 @@
 import Data from "../Models/Data";
 
 export default function LeagueParser(): Data[] {
-  function getFullUrl(url: string): string {
-    const baseUrl = "https://na.leagueoflegends.com/";
-    if (url.startsWith("/")) {
-      return baseUrl + url;
+  function getCategory(title: string): string {
+    const lowerTitle: string = title.toLowerCase();
+    if (lowerTitle.includes("patch") && lowerTitle.includes("note")) {
+      return "update";
     }
-    return url;
+    return "general";
   }
 
-  function getAuthors(cardInfo: HTMLElement): string[] {
-    const authorDiv: HTMLElement = cardInfo.lastChild.lastChild as HTMLElement;
-    const authors = authorDiv.getElementsByTagName("span");
-    if (authors && authors.length > 0) {
-      const authorText = authors[0].textContent;
-      const authorArray = authorText.split(",").map((auth) => {
-        return auth.trim();
-      });
-      return authorArray;
-    } else {
-      return null;
-    }
-  }
-
-  function getImageUrl(card: HTMLElement): string {
-    const imageParent: HTMLElement = card.firstChild as HTMLElement;
-    const imageElement = imageParent.getElementsByTagName("img");
-    if (imageElement && imageElement.length > 0) {
-      return imageElement[0].getAttribute("src");
-    }
-    return null;
-  }
-
-  // TODO: eventually some filtering?
   let documents = [];
-  const newsList = document.getElementsByTagName("ol")[1];
-  const newsCards = newsList.getElementsByTagName("a");
-  for (let i = 0; i < newsCards.length; i++) {
-    const card: HTMLElement = newsCards[i];
-    const cardInfo: HTMLDivElement = card.lastChild.lastChild as HTMLDivElement;
 
-    const link: string = getFullUrl(card.getAttribute("href"));
-    const title: string = cardInfo.getElementsByTagName("h2")[0].innerText;
-    const rawDatetime: string = cardInfo.getElementsByTagName("time")[0].getAttribute("datetime");
-    const authors: string[] = getAuthors(cardInfo);
-    const imageUrl: string = getImageUrl(card);
+  const grid: HTMLOListElement = document.querySelector("ol");
+  const articles: NodeListOf<HTMLLIElement> = grid.querySelectorAll("li");
+  for (let i = 0; i < articles.length; i++) {
+    const article: HTMLLIElement = articles[i];
+
+    const titleElement: HTMLElement = article.querySelector("h2");
+    if (
+      titleElement === null ||
+      titleElement.innerHTML.includes("Teamfight Tactics") ||
+      titleElement.innerHTML.includes("TFT")
+    ) {
+      continue;
+    }
+    const title: string = titleElement.innerHTML;
+    const textContainer: HTMLElement = article.querySelector("h2").parentElement;
+    const link: string = article.querySelector("a").href;
+    const imageUrl: string = article.querySelector("img").src;
+    const rawDatetime: string = textContainer.querySelector("time").dateTime;
+    const category: string = getCategory(title);
 
     const document: Data = {
-      link: link,
       title: title,
+      link: link,
       rawDatetime: rawDatetime,
-      authors: authors,
       imageUrl: imageUrl,
+      category: category,
     };
     documents.push(document);
   }

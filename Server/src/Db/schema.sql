@@ -22,7 +22,6 @@ CREATE TABLE if not exists articles
   link varchar(256) not null,
   imageUrl varchar(256),
   category varchar(50),
-  authors varchar(100),
   game_id int not null,
   date_published date not null,
   date_entered timestamp,

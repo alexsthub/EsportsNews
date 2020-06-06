@@ -26,11 +26,13 @@ function OverwatchNewsParser(): Data[] {
     const imageUrl: string = getImageUrl(article);
     const link: string = article.href;
     const title: string = article.querySelector("h1.Card-title").innerHTML;
+    const category: string = "general";
 
     const doc: Data = {
       title: title,
       link: link,
       imageUrl: imageUrl,
+      category: category,
     };
     documents.push(doc);
   }
@@ -48,10 +50,12 @@ function OverwatchPatchParser(): Data[] {
     const title: string = article.querySelector("h3").innerHTML;
     const splitString: string[] = title.split("–");
     const rawDatetime: string = splitString[1].trim();
+    const category: string = "update";
 
     const doc: Data = {
       rawDatetime: rawDatetime,
       title: title,
+      category: category,
     };
 
     documents.push(doc);

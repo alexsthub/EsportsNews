@@ -35,7 +35,7 @@ function checkForNewArticles(input: Data[], existing: any): Data[] {
 function insertArticlesToDatabase(newArticles: Data[], gameID: number, db: MySQL.Connection) {
   const formattedInserts = formatArticlesToInsertStatements(newArticles, gameID);
   const queryString =
-    "INSERT INTO articles (title, description, link, imageUrl, category, authors, game_id, date_published, date_entered) VALUES ?";
+    "INSERT INTO articles (title, description, link, imageUrl, category, game_id, date_published, date_entered) VALUES ?";
   db.query(queryString, [formattedInserts], (err, result) => {
     if (err) {
       throw err;
@@ -54,7 +54,6 @@ function formatArticlesToInsertStatements(newArticles: Data[], gameID: number) {
     currentResult.push(article.link);
     currentResult.push(article.imageUrl);
     currentResult.push(article.category);
-    currentResult.push(article.authors ? article.authors.join(",") : null);
     currentResult.push(gameID);
     currentResult.push(formatDate(article.rawDatetime));
     currentResult.push(moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"));
@@ -78,7 +77,7 @@ function formatDate(dateString: string): string {
 }
 
 (async function () {
-  const gameID: number = 9;
+  const gameID: number = 5;
   const scraper: GenericScraper = constructScraper(gameID);
   const scrapedArticles: Data[] = await scraper.scrape();
   console.log(scrapedArticles);
