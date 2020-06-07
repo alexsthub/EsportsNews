@@ -17,7 +17,6 @@ import Request from "../Models/Request";
 import Data from "../Models/Data";
 
 // TODO: Overwatch needs like 3 different parsers.
-// TODO: CS has two different pages same parser
 export default function constructScraper(request: Request): GenericScraper {
   let scraper: GenericScraper;
   switch (request.gameID) {
@@ -29,10 +28,8 @@ export default function constructScraper(request: Request): GenericScraper {
       );
       break;
     case 2:
-      scraper = new GenericScraper(
-        "https://blog.counter-strike.net/index.php/category/updates/",
-        CounterStrikeParser
-      );
+      const url: string = getCounterStrikeScrapeParameters(request.type);
+      scraper = new GenericScraper(url, CounterStrikeParser);
       break;
     case 3:
       scraper = new GenericScraper("https://www.epicgames.com/fortnite/en-US/news", FortniteParser);
@@ -47,8 +44,8 @@ export default function constructScraper(request: Request): GenericScraper {
       );
       break;
     case 6:
-      const { url, parser } = getOverwatchScrapeParameters(request.type);
-      scraper = new GenericScraper(url, parser);
+      const params = getOverwatchScrapeParameters(request.type);
+      scraper = new GenericScraper(params.url, params.parser);
       break;
     case 7:
       scraper = new GenericScraper("https://playruneterra.com/en-us/news", RuneterraParser);
@@ -65,6 +62,13 @@ export default function constructScraper(request: Request): GenericScraper {
   }
 
   return scraper;
+}
+
+function getCounterStrikeScrapeParameters(type: string): string {
+  let url: string;
+  if (!type || type === "news") url = "https://blog.counter-strike.net/";
+  else url = "https://blog.counter-strike.net/index.php/category/updates/";
+  return url;
 }
 
 function getOverwatchScrapeParameters(type: string) {

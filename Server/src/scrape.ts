@@ -79,7 +79,7 @@ function formatDate(dateString: string): string {
 
 (async function () {
   const requestMessage: Request = {
-    gameID: 6,
+    gameID: 2,
   };
   const scraper: GenericScraper = constructScraper(requestMessage);
   const scrapedArticles: Data[] = await scraper.scrape();
