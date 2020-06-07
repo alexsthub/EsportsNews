@@ -13,12 +13,14 @@ import HearthstoneParser from "../Parsers/HearthstoneParser";
 import TFTParser from "../Parsers/TFTParser";
 
 import GenericScraper from "../Models/Scraper";
+import Request from "../Models/Request";
+import Data from "../Models/Data";
 
 // TODO: Overwatch needs like 3 different parsers.
 // TODO: CS has two different pages same parser
-export default function constructScraper(gameID: number): GenericScraper {
+export default function constructScraper(request: Request): GenericScraper {
   let scraper: GenericScraper;
-  switch (gameID) {
+  switch (request.gameID) {
     case 1:
       scraper = new GenericScraper(
         "https://www.ea.com/en-gb/games/apex-legends/news#news",
@@ -45,7 +47,8 @@ export default function constructScraper(gameID: number): GenericScraper {
       );
       break;
     case 6:
-      scraper = new GenericScraper("https://playoverwatch.com/en-us/news", OverwatchNewsParser);
+      const { url, parser } = getOverwatchScrapeParameters(request.type);
+      scraper = new GenericScraper(url, parser);
       break;
     case 7:
       scraper = new GenericScraper("https://playruneterra.com/en-us/news", RuneterraParser);
@@ -62,4 +65,20 @@ export default function constructScraper(gameID: number): GenericScraper {
   }
 
   return scraper;
+}
+
+function getOverwatchScrapeParameters(type: string) {
+  let url: string;
+  let parser: () => Data[];
+  if (!type || type === "news") {
+    url = "https://playoverwatch.com/en-us/news";
+    parser = OverwatchNewsParser;
+  } else {
+    url = "https://playoverwatch.com/en-us/news/patch-notes/live";
+    parser = OverwatchPatchParser;
+  }
+  return {
+    url: url,
+    parser: parser,
+  };
 }

@@ -4,6 +4,7 @@ import moment from "moment";
 import constructScraper from "./Helpers/ConstructScraper";
 import GenericScraper from "./Models/Scraper";
 import Data from "./Models/Data";
+import Request from "./Models/Request";
 import db from "./db/dbConnect";
 
 // Query the most recent 30 articles to use as reference to see if they exist.
@@ -77,16 +78,18 @@ function formatDate(dateString: string): string {
 }
 
 (async function () {
-  const gameID: number = 5;
-  const scraper: GenericScraper = constructScraper(gameID);
+  const requestMessage: Request = {
+    gameID: 6,
+  };
+  const scraper: GenericScraper = constructScraper(requestMessage);
   const scrapedArticles: Data[] = await scraper.scrape();
   console.log(scrapedArticles);
 
-  getArticlesByGameId(gameID, db, (result: any) => {
+  getArticlesByGameId(requestMessage.gameID, db, (result: any) => {
     if (!result) return;
     const newArticles = checkForNewArticles(scrapedArticles, result);
     if (newArticles.length > 0) {
-      insertArticlesToDatabase(newArticles, gameID, db);
+      insertArticlesToDatabase(newArticles, requestMessage.gameID, db);
       // TODO: Broadcast these newArticles.
     }
   });

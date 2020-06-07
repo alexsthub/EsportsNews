@@ -41,23 +41,33 @@ function OverwatchNewsParser(): Data[] {
 }
 
 function OverwatchPatchParser(): Data[] {
+  function getLink(): string {
+    const currentDate = new Date();
+    const baseUrl: string = "https://playoverwatch.com/en-us/news/patch-notes/live/"; // year/month
+    const year: number = currentDate.getFullYear();
+    const month: number = currentDate.getMonth() + 1;
+    const link: string = baseUrl + year + "/" + month;
+
+    return link;
+  }
+
   let documents: Data[] = [];
   const body: Element = document.querySelector("div.PatchNotes-body");
   const articles: NodeListOf<Element> = body.querySelectorAll("div.PatchNotes-patch");
+  const link: string = getLink();
   for (let i = 0; i < articles.length; i++) {
     const article: Element = articles[i];
 
     const title: string = article.querySelector("h3").innerHTML;
-    const splitString: string[] = title.split("–");
-    const rawDatetime: string = splitString[1].trim();
+    const rawDatetime: string = article.querySelector("div.PatchNotes-date").innerHTML;
     const category: string = "update";
 
     const doc: Data = {
       rawDatetime: rawDatetime,
       title: title,
       category: category,
+      link: link,
     };
-
     documents.push(doc);
   }
 
