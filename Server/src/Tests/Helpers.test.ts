@@ -1,17 +1,18 @@
 import ConstructScraper from "../Helpers/ConstructScraper";
-import GenericScraper from "../Models/Scraper";
+import GenericScraper from "../Scrapers/GenericScraper";
 import Request from "../Models/Request";
 
 import { formatDate } from "../Helpers/PostScrapeHelpers";
+import Scraper from "../Models/Scraper";
 
 describe("Construct scraper", () => {
   it("should construct correct scraper", (done) => {
     const request: Request = {
       gameID: 5,
     };
-    const scraper: GenericScraper = ConstructScraper(request);
+    const scraper: Scraper = ConstructScraper(request);
     expect(scraper).toBeInstanceOf(GenericScraper);
-    expect(scraper.url).toBe("https://na.leagueoflegends.com/en-us/latest-news/");
+    expect(scraper.getUrl()).toBe("https://na.leagueoflegends.com/en-us/latest-news/");
     done();
   });
 
@@ -19,7 +20,7 @@ describe("Construct scraper", () => {
     const request: Request = {
       gameID: 100,
     };
-    const scraper: GenericScraper = ConstructScraper(request);
+    const scraper: Scraper = ConstructScraper(request);
     expect(scraper).toBe(null);
     done();
   });

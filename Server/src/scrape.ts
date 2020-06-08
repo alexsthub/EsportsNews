@@ -1,13 +1,13 @@
-import GenericScraper from "./Models/Scraper";
 import Data from "./Models/Data";
 import Request from "./Models/Request";
+import Scraper from "./Models/Scraper";
 import db from "./db/dbConnect";
 import constructScraper from "./Helpers/ConstructScraper";
 import {
   getArticlesByGameId,
   checkForNewArticles,
   isOverwatchNews,
-  produceMessagesToSQS,
+  produceOverwatchDetailsMessagesToSQS,
   insertArticlesToDatabase,
 } from "./Helpers/PostScrapeHelpers";
 
@@ -18,9 +18,15 @@ import {
 (async function () {
   const requestMessage: Request = {
     gameID: 6,
-    type: "news",
+    type: "details",
+    article: {
+      title: "Overwatch Double XP Weekend | June 5-9",
+      link: "https://playoverwatch.com/en-us/news/23445048/overwatch-double-xp-weekend-june-5-9",
+      imageUrl: "bnetcmsus-a.akamaihd.net/cms/blog_thumbnail/sv/SVP92ZTXU8M21591062501006.png",
+      category: "general",
+    },
   };
-  const scraper: GenericScraper = constructScraper(requestMessage);
+  const scraper: Scraper = constructScraper(requestMessage);
   const scrapedArticles: Data[] = await scraper.scrape();
   console.log(scrapedArticles);
 
@@ -29,7 +35,7 @@ import {
     const newArticles: Data[] = checkForNewArticles(scrapedArticles, result);
     if (newArticles.length > 0) {
       if (isOverwatchNews(requestMessage)) {
-        produceMessagesToSQS(newArticles);
+        produceOverwatchDetailsMessagesToSQS(newArticles);
       } else {
         insertArticlesToDatabase(newArticles, requestMessage.gameID, db);
         // TODO: Broadcast these newArticles.

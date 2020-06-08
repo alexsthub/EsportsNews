@@ -82,7 +82,7 @@ export function isOverwatchNews(requestMessage: any): boolean {
   return requestMessage.gameID === 6 && (!requestMessage.type || requestMessage.type === "news");
 }
 
-export function produceMessagesToSQS(newArticles: Data[]): void {
+export function produceOverwatchDetailsMessagesToSQS(newArticles: Data[]): void {
   newArticles.forEach((article) => {
     const newMessage: any = {
       gameID: 6,

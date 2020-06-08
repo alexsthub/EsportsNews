@@ -12,13 +12,14 @@ import CounterStrikeParser from "../Parsers/CounterStrikeParser";
 import HearthstoneParser from "../Parsers/HearthstoneParser";
 import TFTParser from "../Parsers/TFTParser";
 
-import GenericScraper from "../Models/Scraper";
+import GenericScraper from "../Scrapers/GenericScraper";
+import OverwatchDetailsScraper from "../Scrapers/OverwatchDetailsScraper";
 import Request from "../Models/Request";
-import Data from "../Models/Data";
+import Scraper from "../Models/Scraper";
 
 // TODO: Overwatch needs like 3 different parsers.
-export default function constructScraper(request: Request): GenericScraper {
-  let scraper: GenericScraper;
+export default function constructScraper(request: Request): Scraper {
+  let scraper;
   switch (request.gameID) {
     case 1:
       scraper = new GenericScraper(
@@ -44,8 +45,7 @@ export default function constructScraper(request: Request): GenericScraper {
       );
       break;
     case 6:
-      const params = getOverwatchScrapeParameters(request.type);
-      scraper = new GenericScraper(params.url, params.parser);
+      scraper = getOverwatchScraper(request);
       break;
     case 7:
       scraper = new GenericScraper("https://playruneterra.com/en-us/news", RuneterraParser);
@@ -73,18 +73,22 @@ function getCounterStrikeScrapeParameters(type: string): string {
   return url;
 }
 
-function getOverwatchScrapeParameters(type: string) {
+function getOverwatchScraper(request: Request): Scraper {
   let url: string;
-  let parser: () => Data[];
-  if (!type || type === "news") {
+  let parser: () => any;
+  let scraper;
+  if (!request.type || request.type === "news") {
     url = "https://playoverwatch.com/en-us/news";
     parser = OverwatchNewsParser;
-  } else {
+    scraper = new GenericScraper(url, parser);
+  } else if (request.type === "patch") {
     url = "https://playoverwatch.com/en-us/news/patch-notes/live";
     parser = OverwatchPatchParser;
+    scraper = new GenericScraper(url, parser);
+  } else {
+    url = request.article.link;
+    parser = OverwatchArticleDateParser;
+    scraper = new OverwatchDetailsScraper(url, parser, request.article);
   }
-  return {
-    url: url,
-    parser: parser,
-  };
+  return scraper;
 }
