@@ -20,6 +20,7 @@ describe("Test the parsers", () => {
     expect(firstArticle.rawDatetime).not.toBeNull();
     done();
   });
+
   it("Counter strike News", async (done) => {
     const requestMessage: Request = {
       gameID: 2,
@@ -36,6 +37,7 @@ describe("Test the parsers", () => {
     expect(firstArticle.rawDatetime).not.toBeNull();
     done();
   });
+
   it("Counter strike News", async (done) => {
     const requestMessage: Request = {
       gameID: 2,
