@@ -11,9 +11,33 @@ import {
   insertArticlesToDatabase,
 } from "./Helpers/PostScrapeHelpers";
 
-// const AWS = require("aws-sdk");
-// AWS.config.update({ region: "us-west-2" });
-// const sqs = new AWS.SQS();
+import AWS from "aws-sdk";
+AWS.config.update({ region: "us-west-2" });
+const sqs = new AWS.SQS();
+
+// var params = {
+//   MessageBody: "Testing the stuff",
+//   MessageDeduplicationId: "Testing", // Required for FIFO queues
+//   MessageGroupId: "Group1", // Required for FIFO queues
+//   QueueUrl: "https://sqs.us-west-2.amazonaws.com/655373160788/articles.fifo",
+// };
+
+// sqs.sendMessage(params, function (err, data) {
+//   if (err) {
+//     console.log("Error", err);
+//   } else {
+//     console.log("Success", data.MessageId);
+//   }
+// });
+
+// const params = {};
+// sqs.listQueues({}, function (err, data) {
+//   if (err) {
+//     console.log("Error", err);
+//   } else {
+//     console.log("Success", data.QueueUrls);
+//   }
+// });
 
 (async function () {
   const requestMessage: Request = {

@@ -17,7 +17,7 @@ export default class GenericScraper implements Scraper {
     return this.url;
   }
 
-  async scrape() {
+  async scrape(): Promise<Data[]> {
     const browser: puppeteer.Browser = await puppeteer.launch({
       headless: this.headless,
     });

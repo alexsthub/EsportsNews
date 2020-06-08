@@ -4,8 +4,8 @@ import Scraper from "../Models/Scraper";
 
 export default class OverwatchDetailsScraper implements Scraper {
   private url: string;
-  private parser: () => Data;
-  private currentData: any;
+  private parser: () => any;
+  private currentData: Data;
   private headless: boolean;
 
   constructor(url: string, parser: () => any, currentData: Data, headless = true) {
@@ -30,8 +30,9 @@ export default class OverwatchDetailsScraper implements Scraper {
       deviceScaleFactor: 1,
     });
     await page.goto(this.url, { waitUntil: "networkidle2" });
-    let data = await page.evaluate(this.parser);
+    let result = await page.evaluate(this.parser);
     await browser.close();
-    return data;
+    this.currentData.rawDatetime = result;
+    return [this.currentData];
   }
 }
