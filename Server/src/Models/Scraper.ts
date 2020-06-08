@@ -2,14 +2,18 @@ import puppeteer from "puppeteer";
 import Data from "./Data";
 
 export default class GenericScraper {
-  protected url: string;
-  protected parser: () => Data[];
-  protected headless: boolean;
+  private _url: string;
+  private parser: () => Data[];
+  private headless: boolean;
 
   constructor(url: string, parser: () => Data[], headless = true) {
-    this.url = url;
+    this._url = url;
     this.parser = parser;
     this.headless = headless;
+  }
+
+  get url(): string {
+    return this._url;
   }
 
   async scrape() {
@@ -22,7 +26,7 @@ export default class GenericScraper {
       height: 1080,
       deviceScaleFactor: 1,
     });
-    await page.goto(this.url, { waitUntil: "networkidle2" });
+    await page.goto(this._url, { waitUntil: "networkidle2" });
     let data: Data[] = await page.evaluate(this.parser);
     await browser.close();
     return data;

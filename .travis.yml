@@ -1,0 +1,12 @@
+language: node_js
+node_js:
+  - "12"
+cache:
+  directories:
+    - "./Server/node_modules"
+before_install:
+  - cd Server
+install:
+  - npm ci
+script:
+  - npm test

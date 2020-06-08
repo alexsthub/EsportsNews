@@ -59,6 +59,8 @@ export default function constructScraper(request: Request): GenericScraper {
         TFTParser
       );
       break;
+    default:
+      return null;
   }
 
   return scraper;
