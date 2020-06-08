@@ -2,9 +2,9 @@ import puppeteer from "puppeteer";
 import Data from "./Data";
 
 export default class GenericScraper {
-  private url: string;
-  private parser: () => Data[];
-  private headless: boolean;
+  protected url: string;
+  protected parser: () => Data[];
+  protected headless: boolean;
 
   constructor(url: string, parser: () => Data[], headless = true) {
     this.url = url;

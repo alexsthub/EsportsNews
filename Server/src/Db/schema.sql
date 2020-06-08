@@ -38,5 +38,5 @@ VALUES
 ("League of Legends", "https://na.leagueoflegends.com/en-us/news/game-updates/", current_timestamp),
 ("Overwatch", "https://playoverwatch.com/en-us/news", current_timestamp),
 ("Legends of Runeterra", "https://playruneterra.com/en-us/news", current_timestamp),
-("Valorant", "https://beta.playvalorant.com/en-us/news/", current_timestamp);
+("Valorant", "https://beta.playvalorant.com/en-us/news/", current_timestamp),
 ("Teamfight Tactics", "https://teamfighttactics.leagueoflegends.com/en-us/news/", current_timestamp);
