@@ -5,6 +5,7 @@ import Data from "../Models/Data";
 
 describe("Test the parsers", () => {
   it("apex legends", async (done) => {
+    jest.setTimeout(12000);
     const requestMessage: Request = {
       gameID: 1,
     };
