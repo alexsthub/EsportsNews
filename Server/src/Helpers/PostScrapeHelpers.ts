@@ -1,6 +1,7 @@
 import MySQL from "mysql";
 import moment from "moment";
 import Data from "../Models/Data";
+import AWS from "aws-sdk";
 
 // Query the most recent 30 articles to use as reference to see if they exist.
 export function getArticlesByGameId(gameID: number, db: MySQL.Connection, callback: Function) {
@@ -83,6 +84,7 @@ export function isOverwatchNews(requestMessage: any): boolean {
 }
 
 export function produceOverwatchDetailsMessagesToSQS(newArticles: Data[]): void {
+  const sqs = new AWS.SQS();
   newArticles.forEach((article) => {
     const newMessage: any = {
       gameID: 6,
@@ -90,16 +92,15 @@ export function produceOverwatchDetailsMessagesToSQS(newArticles: Data[]): void 
       article: article,
     };
     const messageString: string = JSON.stringify(newMessage);
-    console.log(messageString);
     const params = {
-      QueueUrl: "queueURL",
-      DelaySeconds: 0,
       MessageBody: messageString,
-      MessageDeduplicationId: article.title,
-      MessageGroupId: "articles",
+      DelaySeconds: 0,
+      QueueUrl: "https://sqs.us-west-2.amazonaws.com/655373160788/articles",
     };
-    // sqs.sendMessage(params, function (err: any, _: any) {
-    //   if (err) console.log(err);
-    // });
+
+    sqs.sendMessage(params, function (err: any, _: any) {
+      if (err) console.log(err);
+    });
   });
+  return;
 }

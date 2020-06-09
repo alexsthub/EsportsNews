@@ -13,36 +13,11 @@ import {
 
 import AWS from "aws-sdk";
 AWS.config.update({ region: "us-west-2" });
-const sqs = new AWS.SQS();
-
-// var params = {
-//   MessageBody: "Testing the stuff",
-//   MessageDeduplicationId: "Testing", // Required for FIFO queues
-//   MessageGroupId: "Group1", // Required for FIFO queues
-//   QueueUrl: "https://sqs.us-west-2.amazonaws.com/655373160788/articles.fifo",
-// };
-
-// sqs.sendMessage(params, function (err, data) {
-//   if (err) {
-//     console.log("Error", err);
-//   } else {
-//     console.log("Success", data.MessageId);
-//   }
-// });
-
-// const params = {};
-// sqs.listQueues({}, function (err, data) {
-//   if (err) {
-//     console.log("Error", err);
-//   } else {
-//     console.log("Success", data.QueueUrls);
-//   }
-// });
 
 (async function () {
   const requestMessage: Request = {
     gameID: 6,
-    type: "details",
+    type: "news",
     article: {
       title: "Overwatch Double XP Weekend | June 5-9",
       link: "https://playoverwatch.com/en-us/news/23445048/overwatch-double-xp-weekend-june-5-9",
@@ -59,43 +34,11 @@ const sqs = new AWS.SQS();
     const newArticles: Data[] = checkForNewArticles(scrapedArticles, result);
     if (newArticles.length > 0) {
       if (isOverwatchNews(requestMessage)) {
-        produceOverwatchDetailsMessagesToSQS(newArticles);
+        return produceOverwatchDetailsMessagesToSQS(newArticles);
       } else {
-        insertArticlesToDatabase(newArticles, requestMessage.gameID, db);
+        return insertArticlesToDatabase(newArticles, requestMessage.gameID, db);
         // TODO: Broadcast these newArticles.
       }
     }
   });
 })();
-
-// var params = {
-//   AttributeNames: [
-//      "SentTimestamp"
-//   ],
-//   MaxNumberOfMessages: 10,
-//   MessageAttributeNames: [
-//      "All"
-//   ],
-//   QueueUrl: 'tempQueueURL',
-//   VisibilityTimeout: 20,
-//   WaitTimeSeconds: 0
-//  };
-
-//  sqs.receiveMessage(params, function(err: any, data: any) {
-//    if (err) {
-//      console.log("Receive Error", err);
-//      return;
-//    } else {
-//     var deleteParams = {
-//       QueueUrl: 'tempQueueURL',
-//       ReceiptHandle: data.Messages[0].ReceiptHandle
-//     };
-//     sqs.deleteMessage(deleteParams, function(err: any, data: any) {
-//       if (err) {
-//         console.log("Delete Error", err);
-//       } else {
-//         console.log("Message Deleted", data);
-//       }
-//     });
-//    }
-//  });
