@@ -1,4 +1,11 @@
 {
+  "exclude": [
+    "node_modules",
+    "public",
+    "typings/browser.d.ts",
+    "typings/browser/**",
+    "src/Tests",
+  ],
   "compilerOptions": {
     /* Basic Options */
     "target": "es2017",

@@ -5,6 +5,8 @@ services: xvfb
 branches:
   only:
     - master
+notifications:
+  email: false
 cache:
   directories:
     - "./Server/node_modules"

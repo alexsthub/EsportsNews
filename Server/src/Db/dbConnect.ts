@@ -2,9 +2,9 @@ import mysql from "mysql";
 
 const port = 3306;
 let con: mysql.Connection = mysql.createConnection({
-  host: "localhost",
+  host: "news.c2cq8ee6kdum.us-west-2.rds.amazonaws.com",
   port: port,
-  user: "root",
+  user: "admin",
   password: process.env.newsDBPassword,
   database: "news",
 });
