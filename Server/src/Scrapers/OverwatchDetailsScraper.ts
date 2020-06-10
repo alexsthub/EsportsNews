@@ -1,4 +1,5 @@
-import puppeteer from "puppeteer";
+import puppeteer from "puppeteer-core";
+import chromium from "chrome-aws-lambda";
 import Data from "../Models/Data";
 import Scraper from "../Models/Scraper";
 
@@ -20,10 +21,12 @@ export default class OverwatchDetailsScraper implements Scraper {
   }
 
   async scrape() {
-    const browser: puppeteer.Browser = await puppeteer.launch({
+    const browser = await puppeteer.launch({
+      executablePath: await chromium.executablePath,
       headless: this.headless,
+      ignoreHTTPSErrors: true,
     });
-    const page: puppeteer.Page = await browser.newPage();
+    const page = await browser.newPage();
     await page.setViewport({
       width: 1920,
       height: 1080,
