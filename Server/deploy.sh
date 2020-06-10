@@ -1,7 +1,11 @@
+echo "compiling..."
+tsc
 rm -r node_modules
 npm install -production
 
-zip -r scrape.zip build/.
+cd build
+zip -r ../scrape.zip .
+cd ..
 zip -ur scrape.zip node_modules
 
 npm install --only=dev
@@ -11,4 +15,5 @@ aws s3 cp scrape.zip s3://alexstlambda
 
 rm -f scrape.zip
 
-# PATH: s3://alexstlambda/scrape.zip
+echo "s3://alexstlambda/scrape.zip" | pbcopy
+echo "The s3 file location has been saved to clipboard. Go to the aws lambda console."

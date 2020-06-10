@@ -5,6 +5,7 @@ import AWS from "aws-sdk";
 
 // Query the most recent 30 articles to use as reference to see if they exist.
 export function getArticlesByGameId(gameID: number, db: MySQL.Connection, callback: Function) {
+  console.log("Querying DB");
   db.query(
     "SELECT * FROM articles WHERE game_id = ? ORDER BY id limit 30",
     gameID,
