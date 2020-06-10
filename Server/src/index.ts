@@ -39,26 +39,3 @@ exports.handler = async (event: any) => {
 
   return;
 };
-
-(async () => {
-  const requestMessage: Request = {
-    gameID: 5,
-    type: "news",
-  };
-  const scraper: Scraper = constructScraper(requestMessage);
-  const scrapedArticles: Data[] = await scraper.scrape();
-  console.log(scrapedArticles);
-
-  getArticlesByGameId(requestMessage.gameID, db, (result: any) => {
-    if (!result) return;
-    const newArticles: Data[] = checkForNewArticles(scrapedArticles, result);
-    if (newArticles.length > 0) {
-      if (isOverwatchNews(requestMessage)) {
-        return produceOverwatchDetailsMessagesToSQS(newArticles);
-      } else {
-        insertArticlesToDatabase(newArticles, requestMessage.gameID, db);
-        return sendArticlesToWebsocketServer(newArticles);
-      }
-    }
-  });
-})();
