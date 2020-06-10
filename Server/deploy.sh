@@ -10,3 +10,5 @@ aws s3 rm s3://alexstlambda/scrape.zip
 aws s3 cp scrape.zip s3://alexstlambda
 
 rm -f scrape.zip
+
+# PATH: s3://alexstlambda/scrape.zip

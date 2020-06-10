@@ -15,10 +15,34 @@ import {
 import AWS from "aws-sdk";
 AWS.config.update({ region: "us-west-2" });
 
+(async function () {
+  const requestMessage: Request = {
+    gameID: 7,
+    type: "news",
+  };
+  const scraper: Scraper = constructScraper(requestMessage);
+  const scrapedArticles: Data[] = await scraper.scrape();
+  console.log(scrapedArticles);
+
+  getArticlesByGameId(requestMessage.gameID, db, (result: any) => {
+    if (!result) return;
+    const newArticles: Data[] = checkForNewArticles(scrapedArticles, result);
+    if (newArticles.length > 0) {
+      if (isOverwatchNews(requestMessage)) {
+        return produceOverwatchDetailsMessagesToSQS(newArticles);
+      } else {
+        insertArticlesToDatabase(newArticles, requestMessage.gameID, db);
+        return sendArticlesToWebsocketServer(newArticles);
+      }
+    }
+  });
+})();
+
 exports.handler = async (event: any) => {
   const record: any = event.Records[0];
   const body: string = record.body;
   const requestMessage: Request = JSON.parse(body);
+  console.log(requestMessage);
 
   const scraper: Scraper = constructScraper(requestMessage);
   const scrapedArticles: Data[] = await scraper.scrape();
