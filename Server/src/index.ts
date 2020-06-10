@@ -9,22 +9,17 @@ import {
   isOverwatchNews,
   produceOverwatchDetailsMessagesToSQS,
   insertArticlesToDatabase,
+  sendArticlesToWebsocketServer,
 } from "./Helpers/PostScrapeHelpers";
 
 import AWS from "aws-sdk";
 AWS.config.update({ region: "us-west-2" });
 
-(async function () {
-  const requestMessage: Request = {
-    gameID: 6,
-    type: "news",
-    article: {
-      title: "Overwatch Double XP Weekend | June 5-9",
-      link: "https://playoverwatch.com/en-us/news/23445048/overwatch-double-xp-weekend-june-5-9",
-      imageUrl: "bnetcmsus-a.akamaihd.net/cms/blog_thumbnail/sv/SVP92ZTXU8M21591062501006.png",
-      category: "general",
-    },
-  };
+exports.handler = async (event: any) => {
+  const record: any = event.Records[0];
+  const body: string = record.body;
+  const requestMessage: Request = JSON.parse(body);
+
   const scraper: Scraper = constructScraper(requestMessage);
   const scrapedArticles: Data[] = await scraper.scrape();
   console.log(scrapedArticles);
@@ -36,9 +31,11 @@ AWS.config.update({ region: "us-west-2" });
       if (isOverwatchNews(requestMessage)) {
         return produceOverwatchDetailsMessagesToSQS(newArticles);
       } else {
-        return insertArticlesToDatabase(newArticles, requestMessage.gameID, db);
-        // TODO: Broadcast these newArticles.
+        insertArticlesToDatabase(newArticles, requestMessage.gameID, db);
+        return sendArticlesToWebsocketServer(newArticles);
       }
     }
   });
-})();
+
+  return;
+};

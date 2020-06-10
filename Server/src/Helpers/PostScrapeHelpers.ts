@@ -85,19 +85,35 @@ export function isOverwatchNews(requestMessage: any): boolean {
 
 export function produceOverwatchDetailsMessagesToSQS(newArticles: Data[]): void {
   const sqs = new AWS.SQS();
-  newArticles.forEach((article) => {
+  newArticles.forEach((article: Data) => {
     const newMessage: any = {
       gameID: 6,
       type: "details",
       article: article,
     };
     const messageString: string = JSON.stringify(newMessage);
-    const params = {
+    const params: any = {
       MessageBody: messageString,
       DelaySeconds: 0,
       QueueUrl: "https://sqs.us-west-2.amazonaws.com/655373160788/articles",
     };
 
+    sqs.sendMessage(params, function (err: any, _: any) {
+      if (err) console.log(err);
+    });
+  });
+  return;
+}
+
+export function sendArticlesToWebsocketServer(newArticles: Data[]): void {
+  const sqs = new AWS.SQS();
+  newArticles.forEach((article: Data) => {
+    const message: string = JSON.stringify(article);
+    const params: any = {
+      MessageBody: message,
+      DelaySeconds: 0,
+      QueueUrl: "https://sqs.us-west-2.amazonaws.com/655373160788/toWebsocketServer",
+    };
     sqs.sendMessage(params, function (err: any, _: any) {
       if (err) console.log(err);
     });
