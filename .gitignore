@@ -1,5 +1,6 @@
 node_modules
 build
+.vscode
 ./extension/node_modules
 ./extension/*.crx
 ./extension/.DS_Store

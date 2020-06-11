@@ -43,7 +43,7 @@ AWS.config.update({ region: "us-west-2" });
 })();
 
 exports.handler = async (event: any) => {
-  const db = await getDatabaseConnection();
+  const db: MySql.Connection = await getDatabaseConnection();
 
   const record: any = event.Records[0];
   const body: string = record.body;
