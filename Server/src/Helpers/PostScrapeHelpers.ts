@@ -1,22 +1,14 @@
-import MySQL from "mysql";
+import MySQL from "mysql2/promise";
 import moment from "moment";
 import Data from "../Models/Data";
 import AWS from "aws-sdk";
 
 // Query the most recent 30 articles to use as reference to see if they exist.
-export function getArticlesByGameId(gameID: number, db: MySQL.Connection, callback: Function) {
+export async function getArticlesByGameId(gameID: number, db: MySQL.Connection): Promise<any> {
   console.log("Querying DB");
-  db.query(
-    "SELECT * FROM articles WHERE game_id = ? ORDER BY id limit 30",
-    gameID,
-    (err, result) => {
-      if (err) {
-        callback(null);
-      } else {
-        callback(result);
-      }
-    }
-  );
+  const query: string = "SELECT * FROM articles WHERE game_id = ? ORDER BY id limit 30";
+  const [rows, _] = await db.execute(query, [gameID]);
+  return rows;
 }
 
 // O(n^2) but only a max N of 30 so I'm going to say its OK.
@@ -30,7 +22,7 @@ export function checkForNewArticles(input: Data[], existing: any): Data[] {
   return ret;
 }
 
-export function insertArticlesToDatabase(
+export async function insertArticlesToDatabase(
   newArticles: Data[],
   gameID: number,
   db: MySQL.Connection
@@ -38,11 +30,8 @@ export function insertArticlesToDatabase(
   const formattedInserts = formatArticlesToInsertStatements(newArticles, gameID);
   const queryString =
     "INSERT INTO articles (title, description, link, imageUrl, category, game_id, date_published, date_entered) VALUES ?";
-  db.query(queryString, [formattedInserts], (err, result) => {
-    if (err) {
-      throw err;
-    }
-  });
+  const result = await db.execute(queryString, [formattedInserts]);
+  console.log(result);
 }
 
 export function formatArticlesToInsertStatements(newArticles: Data[], gameID: number) {

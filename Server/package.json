@@ -13,12 +13,11 @@
   "dependencies": {
     "chrome-aws-lambda": "^3.1.1",
     "moment": "^2.26.0",
-    "mysql": "^2.18.1",
+    "mysql2": "^2.1.0",
     "puppeteer-core": "^3.1.0"
   },
   "devDependencies": {
     "@types/jest": "^25.2.3",
-    "@types/mysql": "^2.15.13",
     "@types/puppeteer-core": "^2.0.0",
     "aws-sdk": "^2.694.0",
     "jest": "^26.0.1",
