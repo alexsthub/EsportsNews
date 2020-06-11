@@ -2,6 +2,11 @@ language: node_js
 node_js:
   - "12"
 services: xvfb
+branches:
+  only:
+    - master
+notifications:
+  email: false
 cache:
   directories:
     - "./Server/node_modules"

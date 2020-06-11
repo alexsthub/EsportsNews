@@ -1,4 +1,4 @@
-import puppeteer from "puppeteer";
+import chromium from "chrome-aws-lambda";
 import Data from "../Models/Data";
 import Scraper from "../Models/Scraper";
 
@@ -18,18 +18,37 @@ export default class GenericScraper implements Scraper {
   }
 
   async scrape(): Promise<Data[]> {
-    const browser: puppeteer.Browser = await puppeteer.launch({
-      headless: this.headless,
-    });
-    const page: puppeteer.Page = await browser.newPage();
-    await page.setViewport({
-      width: 1920,
-      height: 1080,
-      deviceScaleFactor: 1,
-    });
-    await page.goto(this.url, { waitUntil: "networkidle2" });
-    let data: Data[] = await page.evaluate(this.parser);
-    await browser.close();
-    return data;
+    console.log("Entering scrape call");
+    let browser = null;
+    let result = null;
+    try {
+      console.log("Opening browser");
+      browser = await chromium.puppeteer.launch({
+        args: chromium.args,
+        executablePath: await chromium.executablePath,
+        headless: this.headless,
+        defaultViewport: chromium.defaultViewport,
+        ignoreHTTPSErrors: true,
+        dumpio: true,
+      });
+      console.log("Launched");
+      console.log(browser);
+      const page = await browser.newPage();
+      console.log("Created new page");
+      await page.goto(this.url, { waitUntil: "networkidle2" });
+      console.log("Arrived at new page");
+      result = await page.evaluate(this.parser);
+      console.log("Evaluated page! THIS IS GOOD NEWS");
+    } catch (error) {
+      console.log(error);
+    } finally {
+      console.log("Finally");
+      console.log(browser);
+      if (browser !== null) {
+        console.log("Closing browser");
+        await browser.close();
+      }
+    }
+    return result;
   }
 }

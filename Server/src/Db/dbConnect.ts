@@ -1,16 +1,15 @@
-import mysql from "mysql";
+import mysql from "mysql2/promise";
 
-const port = 3306;
-let con: mysql.Connection = mysql.createConnection({
-  host: "localhost",
-  port: port,
-  user: "root",
+const config: object = {
+  host: "news.c2cq8ee6kdum.us-west-2.rds.amazonaws.com",
+  port: 3306,
+  user: "admin",
   password: process.env.newsDBPassword,
   database: "news",
-});
-con.connect(function (err: any) {
-  if (err) throw err;
-  console.log("Connected!");
-});
+};
 
-export default con;
+export default async function getDatabaseConnection() {
+  let connection = await mysql.createConnection(config);
+  console.log("Connected!");
+  return connection;
+}

@@ -1,46 +1,35 @@
-import MySQL from "mysql";
 import moment from "moment";
 import Data from "../Models/Data";
+import AWS from "aws-sdk";
 
 // Query the most recent 30 articles to use as reference to see if they exist.
-export function getArticlesByGameId(gameID: number, db: MySQL.Connection, callback: Function) {
-  db.query(
-    "SELECT * FROM articles WHERE game_id = ? ORDER BY id limit 30",
-    gameID,
-    (err, result) => {
-      if (err) {
-        callback(null);
-      } else {
-        callback(result);
-      }
-    }
-  );
+export async function getArticlesByGameId(gameID: number, db: any): Promise<any> {
+  console.log("Querying DB");
+  const query: string =
+    "SELECT * FROM articles WHERE game_id = ? ORDER BY date_published desc limit 30";
+  const [rows, _] = await db.execute(query, [gameID]);
+  return rows;
 }
 
 // O(n^2) but only a max N of 30 so I'm going to say its OK.
 export function checkForNewArticles(input: Data[], existing: any): Data[] {
   const ret: Data[] = [];
   input.forEach((inputObj) => {
-    const exists: boolean = existing.some((e: any) => e.title === inputObj.title);
+    const exists: boolean = existing.some(
+      (e: any) => e.title.toLowerCase() === inputObj.title.toLowerCase()
+    );
     if (!exists) ret.push(inputObj);
   });
 
   return ret;
 }
 
-export function insertArticlesToDatabase(
-  newArticles: Data[],
-  gameID: number,
-  db: MySQL.Connection
-) {
+export async function insertArticlesToDatabase(newArticles: Data[], gameID: number, db: any) {
   const formattedInserts = formatArticlesToInsertStatements(newArticles, gameID);
   const queryString =
     "INSERT INTO articles (title, description, link, imageUrl, category, game_id, date_published, date_entered) VALUES ?";
-  db.query(queryString, [formattedInserts], (err, result) => {
-    if (err) {
-      throw err;
-    }
-  });
+  const [result, _] = await db.query(queryString, [formattedInserts]);
+  console.log(`Inserted ${result.affectedRows} rows.`);
 }
 
 export function formatArticlesToInsertStatements(newArticles: Data[], gameID: number) {
@@ -83,23 +72,39 @@ export function isOverwatchNews(requestMessage: any): boolean {
 }
 
 export function produceOverwatchDetailsMessagesToSQS(newArticles: Data[]): void {
-  newArticles.forEach((article) => {
+  const sqs = new AWS.SQS();
+  newArticles.forEach((article: Data) => {
     const newMessage: any = {
       gameID: 6,
       type: "details",
       article: article,
     };
     const messageString: string = JSON.stringify(newMessage);
-    console.log(messageString);
-    const params = {
-      QueueUrl: "queueURL",
-      DelaySeconds: 0,
+    const params: any = {
       MessageBody: messageString,
-      MessageDeduplicationId: article.title,
-      MessageGroupId: "articles",
+      DelaySeconds: 0,
+      QueueUrl: "https://sqs.us-west-2.amazonaws.com/655373160788/articles",
     };
-    // sqs.sendMessage(params, function (err: any, _: any) {
-    //   if (err) console.log(err);
-    // });
+
+    sqs.sendMessage(params, function (err: any, _: any) {
+      if (err) console.log(err);
+    });
   });
+  return;
+}
+
+export function sendArticlesToWebsocketServer(newArticles: Data[]): void {
+  const sqs = new AWS.SQS();
+  newArticles.forEach((article: Data) => {
+    const message: string = JSON.stringify(article);
+    const params: any = {
+      MessageBody: message,
+      DelaySeconds: 0,
+      QueueUrl: "https://sqs.us-west-2.amazonaws.com/655373160788/toWebsocketServer",
+    };
+    sqs.sendMessage(params, function (err: any, _: any) {
+      if (err) console.log(err);
+    });
+  });
+  return;
 }

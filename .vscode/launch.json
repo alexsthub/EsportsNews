@@ -15,7 +15,7 @@
       "${workspaceFolder}/**/*.js"
     ],
     "env": {
-      "newsDBPassword": "password"
+      "newsDBPassword": "timeforadministration"
     }
   }]
 }

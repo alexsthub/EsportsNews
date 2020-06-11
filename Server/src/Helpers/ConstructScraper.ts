@@ -17,7 +17,6 @@ import OverwatchDetailsScraper from "../Scrapers/OverwatchDetailsScraper";
 import Request from "../Models/Request";
 import Scraper from "../Models/Scraper";
 
-// TODO: Overwatch needs like 3 different parsers.
 export default function constructScraper(request: Request): Scraper {
   let scraper;
   switch (request.gameID) {
