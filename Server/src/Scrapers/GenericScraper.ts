@@ -29,10 +29,8 @@ export default class GenericScraper implements Scraper {
         headless: this.headless,
         defaultViewport: chromium.defaultViewport,
         ignoreHTTPSErrors: true,
-        dumpio: true,
       });
       console.log("Launched");
-      console.log(browser);
       const page = await browser.newPage();
       console.log("Created new page");
       await page.goto(this.url, { waitUntil: "networkidle2" });
@@ -42,8 +40,6 @@ export default class GenericScraper implements Scraper {
     } catch (error) {
       console.log(error);
     } finally {
-      console.log("Finally");
-      console.log(browser);
       if (browser !== null) {
         console.log("Closing browser");
         await browser.close();

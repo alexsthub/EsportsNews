@@ -24,7 +24,7 @@ export default class OverwatchDetailsScraper implements Scraper {
     let browser = null;
     try {
       browser = await chromium.puppeteer.launch({
-        args: ["--no-sandbox", "--disable-setuid-sandbox"],
+        args: chromium.args,
         executablePath: await chromium.executablePath,
         headless: this.headless,
         defaultViewport: chromium.defaultViewport,
