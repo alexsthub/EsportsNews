@@ -1,12 +1,12 @@
-import MySQL from "mysql2/promise";
 import moment from "moment";
 import Data from "../Models/Data";
 import AWS from "aws-sdk";
 
 // Query the most recent 30 articles to use as reference to see if they exist.
-export async function getArticlesByGameId(gameID: number, db: MySQL.Connection): Promise<any> {
+export async function getArticlesByGameId(gameID: number, db: any): Promise<any> {
   console.log("Querying DB");
-  const query: string = "SELECT * FROM articles WHERE game_id = ? ORDER BY id limit 30";
+  const query: string =
+    "SELECT * FROM articles WHERE game_id = ? ORDER BY date_published desc limit 30";
   const [rows, _] = await db.execute(query, [gameID]);
   return rows;
 }
@@ -15,23 +15,21 @@ export async function getArticlesByGameId(gameID: number, db: MySQL.Connection):
 export function checkForNewArticles(input: Data[], existing: any): Data[] {
   const ret: Data[] = [];
   input.forEach((inputObj) => {
-    const exists: boolean = existing.some((e: any) => e.title === inputObj.title);
+    const exists: boolean = existing.some(
+      (e: any) => e.title.toLowerCase() === inputObj.title.toLowerCase()
+    );
     if (!exists) ret.push(inputObj);
   });
 
   return ret;
 }
 
-export async function insertArticlesToDatabase(
-  newArticles: Data[],
-  gameID: number,
-  db: MySQL.Connection
-) {
+export async function insertArticlesToDatabase(newArticles: Data[], gameID: number, db: any) {
   const formattedInserts = formatArticlesToInsertStatements(newArticles, gameID);
   const queryString =
     "INSERT INTO articles (title, description, link, imageUrl, category, game_id, date_published, date_entered) VALUES ?";
-  const result = await db.execute(queryString, [formattedInserts]);
-  console.log(result);
+  const [result, _] = await db.query(queryString, [formattedInserts]);
+  console.log(`Inserted ${result.affectedRows} rows.`);
 }
 
 export function formatArticlesToInsertStatements(newArticles: Data[], gameID: number) {
