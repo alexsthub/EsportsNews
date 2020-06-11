@@ -4,7 +4,6 @@ import AWS from "aws-sdk";
 
 // Query the most recent 30 articles to use as reference to see if they exist.
 export async function getArticlesByGameId(gameID: number, db: any): Promise<any> {
-  console.log("Querying DB");
   const query: string =
     "SELECT * FROM articles WHERE game_id = ? ORDER BY date_published desc limit 30";
   const [rows, _] = await db.execute(query, [gameID]);

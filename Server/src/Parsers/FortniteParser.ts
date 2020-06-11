@@ -15,12 +15,14 @@ export default function FortniteParser() {
     const imageUrl: string = card.querySelector("img").src;
     const rawDatetime: string = gridContent.querySelector(".date").innerHTML;
     const title: string = gridContent.querySelector(".title").innerHTML;
+    const category: string = "general";
 
     const doc = {
       title: title,
       link: link,
       imageUrl: imageUrl,
       rawDatetime: rawDatetime,
+      category: category,
     };
 
     documents.push(doc);
