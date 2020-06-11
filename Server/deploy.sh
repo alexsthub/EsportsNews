@@ -1,7 +1,7 @@
 echo "compiling..."
 tsc
 
-echo "installing producting modules..."
+echo "installing production modules..."
 rm -r node_modules
 npm install -production
 

@@ -18,18 +18,19 @@ AWS.config.update({ region: "us-west-2" });
 
 (async function () {
   const requestMessage: Request = {
-    gameID: 3,
+    gameID: 8,
     type: "news",
   };
   const db: MySql.Connection = await getDatabaseConnection();
   const scraper: Scraper = constructScraper(requestMessage);
   const scrapedArticles: Data[] = await scraper.scrape();
   if (!scrapedArticles || scrapedArticles.length === 0) return;
-  console.log(scrapedArticles);
+  console.log(`Scraped ${scrapedArticles.length} articles.`);
 
-  const result: any = await getArticlesByGameId(requestMessage.gameID, db);
+  const result: any = await getArticlesByGameId(requestMessage.gameID, scrapedArticles.length, db);
   if (!result) return;
   const newArticles: Data[] = checkForNewArticles(scrapedArticles, result);
+  console.log(`There are ${newArticles.length} new articles.`);
   if (newArticles.length > 0) {
     if (isOverwatchNews(requestMessage)) {
       produceOverwatchDetailsMessagesToSQS(newArticles);
@@ -38,7 +39,6 @@ AWS.config.update({ region: "us-west-2" });
       sendArticlesToWebsocketServer(newArticles);
     }
   }
-  console.log("close db");
   await db.end();
 })();
 
@@ -52,12 +52,12 @@ exports.handler = async (event: any) => {
   const scraper: Scraper = constructScraper(requestMessage);
   const scrapedArticles: Data[] = await scraper.scrape();
   if (!scrapedArticles || scrapedArticles.length === 0) return;
-  console.log("Scraped Article Results:\n" + scrapedArticles);
+  console.log(`Scraped ${scrapedArticles.length} articles.`);
 
-  const result: any = await getArticlesByGameId(requestMessage.gameID, db);
+  const result: any = await getArticlesByGameId(requestMessage.gameID, scrapedArticles.length, db);
   if (!result) return;
   const newArticles: Data[] = checkForNewArticles(scrapedArticles, result);
-  console.log("New Article Results:\n" + newArticles);
+  console.log(`There are ${newArticles.length} new articles.`);
   if (newArticles.length > 0) {
     if (isOverwatchNews(requestMessage)) {
       produceOverwatchDetailsMessagesToSQS(newArticles);

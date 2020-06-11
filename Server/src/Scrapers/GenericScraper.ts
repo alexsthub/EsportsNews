@@ -18,7 +18,6 @@ export default class GenericScraper implements Scraper {
   }
 
   async scrape(): Promise<Data[]> {
-    console.log("Entering scrape call");
     let browser = null;
     let result = null;
     try {
@@ -36,7 +35,7 @@ export default class GenericScraper implements Scraper {
       await page.goto(this.url, { waitUntil: "networkidle2" });
       console.log("Arrived at new page");
       result = await page.evaluate(this.parser);
-      console.log("Evaluated page! THIS IS GOOD NEWS");
+      console.log("Evaluated page");
     } catch (error) {
       console.log(error);
     } finally {
