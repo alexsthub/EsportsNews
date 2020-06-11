@@ -1,3 +1,4 @@
+import MySql from "mysql2/promise";
 import Data from "./Models/Data";
 import Request from "./Models/Request";
 import Scraper from "./Models/Scraper";
@@ -20,7 +21,7 @@ AWS.config.update({ region: "us-west-2" });
     gameID: 3,
     type: "news",
   };
-  const db = await getDatabaseConnection();
+  const db: MySql.Connection = await getDatabaseConnection();
   const scraper: Scraper = constructScraper(requestMessage);
   const scrapedArticles: Data[] = await scraper.scrape();
   if (!scrapedArticles || scrapedArticles.length === 0) return;

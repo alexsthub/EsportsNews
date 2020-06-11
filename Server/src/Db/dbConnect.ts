@@ -1,4 +1,4 @@
-import mysql from "mysql2/promise";
+import MySql from "mysql2/promise";
 
 const config: object = {
   host: "news.c2cq8ee6kdum.us-west-2.rds.amazonaws.com",
@@ -9,7 +9,7 @@ const config: object = {
 };
 
 export default async function getDatabaseConnection() {
-  let connection = await mysql.createConnection(config);
+  let connection: MySql.Connection = await MySql.createConnection(config);
   console.log("Connected!");
   return connection;
 }
