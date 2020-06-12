@@ -1,13 +1,15 @@
+# Deploy script needs to avoid "sqs-consumer" and "ws"
 echo "compiling..."
 tsc
 
 echo "installing production modules..."
 rm -r node_modules
 npm install -production
+npm uninstall sqs-consumer ws
 
 echo "zipping packages..."
 cd build
-zip -r ../scrape.zip .
+zip -r ../scrape.zip . -x "./Websocket/*"
 cd ..
 zip -ur scrape.zip node_modules
 
