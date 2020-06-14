@@ -2,6 +2,7 @@ import * as WebSocket from "ws";
 import * as SqsConsumer from "sqs-consumer";
 import MySql from "mysql2/promise";
 import AWS from "aws-sdk";
+import { Article, ArticleStore } from "./ArticleStore";
 AWS.config.update({ region: "us-west-2" });
 import getDatabaseConnection from "../db/dbConnect";
 
@@ -115,57 +116,7 @@ class SqsLongPoll {
   }
 }
 
-interface Article {
-  title: string;
-  game_id: number;
-  category: string;
-  link: string;
-  date_published: Date;
-  imageUrl?: string;
-  description?: string;
-}
-
-class ArticleStore {
-  private articles: Map<number, Article[]>;
-  private maxArticlesPerGame: number;
-
-  constructor(maxArticlesPerGame: number) {
-    this.maxArticlesPerGame = maxArticlesPerGame;
-    this.articles = new Map<number, Article[]>();
-  }
-
-  getArticles(): Map<number, Article[]> {
-    return this.articles;
-  }
-
-  insert(article: Article): void {
-    const gameID: number = article.game_id;
-    if (!this.articles.has(gameID)) this.articles.set(gameID, []);
-    const gameArticleList: Article[] = this.articles.get(gameID);
-    if (gameArticleList.length >= this.maxArticlesPerGame) {
-      gameArticleList.pop();
-    }
-    this.sortedInsert(gameArticleList, article);
-  }
-
-  private sortedInsert(gameArticleList: Article[], article: Article): void {
-    for (let i = 0; i < gameArticleList.length; i++) {
-      const currentArticle = gameArticleList[i];
-      if (
-        article.date_published >= currentArticle.date_published &&
-        article.title !== currentArticle.title
-      ) {
-        gameArticleList.splice(i, 0, article);
-        return;
-      }
-    }
-    gameArticleList.push(article);
-    return;
-  }
-}
-
 // TODO: When we get new articles, we have to update `recentArticles`. Insert front delete back
-// TODO: Also need to broadcast to the connections that are subscribed
 // TODO: Update gameToConnection when client changes game subscription
 const recentArticles: ArticleStore = new ArticleStore(8);
 (async () => {
