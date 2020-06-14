@@ -18,7 +18,7 @@ AWS.config.update({ region: "us-west-2" });
 
 // (async function () {
 //   const requestMessage: Request = {
-//     gameID: 8,
+//     gameID: 4,
 //     type: "news",
 //   };
 //   const db: MySql.Connection = await getDatabaseConnection();

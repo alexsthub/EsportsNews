@@ -99,7 +99,7 @@ export function sendArticlesToWebsocketServer(newArticles: Data[]): void {
     const params: any = {
       MessageBody: message,
       DelaySeconds: 0,
-      QueueUrl: "https://sqs.us-west-2.amazonaws.com/655373160788/toWebsocketServer",
+      QueueUrl: process.env.websocketQueueUrl,
     };
     sqs.sendMessage(params, function (err: any, _: any) {
       if (err) console.log(err);
