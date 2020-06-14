@@ -16,31 +16,31 @@ import {
 import AWS from "aws-sdk";
 AWS.config.update({ region: "us-west-2" });
 
-// (async function () {
-//   const requestMessage: Request = {
-//     gameID: 4,
-//     type: "news",
-//   };
-//   const db: MySql.Connection = await getDatabaseConnection();
-//   const scraper: Scraper = constructScraper(requestMessage);
-//   const scrapedArticles: Data[] = await scraper.scrape();
-//   if (!scrapedArticles || scrapedArticles.length === 0) return;
-//   console.log(`Scraped ${scrapedArticles.length} articles.`);
+(async function () {
+  const requestMessage: Request = {
+    gameID: 4,
+    type: "news",
+  };
+  const db: MySql.Connection = await getDatabaseConnection();
+  const scraper: Scraper = constructScraper(requestMessage);
+  const scrapedArticles: Data[] = await scraper.scrape();
+  if (!scrapedArticles || scrapedArticles.length === 0) return;
+  console.log(`Scraped ${scrapedArticles.length} articles.`);
 
-//   const result: any = await getArticlesByGameId(requestMessage.gameID, scrapedArticles.length, db);
-//   if (!result) return;
-//   const newArticles: Data[] = checkForNewArticles(scrapedArticles, result);
-//   console.log(`There are ${newArticles.length} new articles.`);
-//   if (newArticles.length > 0) {
-//     if (isOverwatchNews(requestMessage)) {
-//       produceOverwatchDetailsMessagesToSQS(newArticles);
-//     } else {
-//       insertArticlesToDatabase(newArticles, requestMessage.gameID, db);
-//       sendArticlesToWebsocketServer(newArticles);
-//     }
-//   }
-//   await db.end();
-// })();
+  const result: any = await getArticlesByGameId(requestMessage.gameID, scrapedArticles.length, db);
+  if (!result) return;
+  const newArticles: Data[] = checkForNewArticles(scrapedArticles, result);
+  console.log(`There are ${newArticles.length} new articles.`);
+  if (newArticles.length > 0) {
+    if (isOverwatchNews(requestMessage)) {
+      produceOverwatchDetailsMessagesToSQS(newArticles);
+    } else {
+      insertArticlesToDatabase(newArticles, requestMessage.gameID, db);
+      sendArticlesToWebsocketServer(newArticles);
+    }
+  }
+  await db.end();
+})();
 
 exports.handler = async (event: any) => {
   const db: MySql.Connection = await getDatabaseConnection();

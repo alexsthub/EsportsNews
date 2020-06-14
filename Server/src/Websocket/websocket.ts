@@ -5,35 +5,6 @@ import AWS from "aws-sdk";
 AWS.config.update({ region: "us-west-2" });
 import getDatabaseConnection from "../db/dbConnect";
 
-// TODO: When we get new articles, we have to update `recentArticles`. Insert front delete back
-// TODO: Also need to broadcast to the connections that are subscribed
-// TODO: Update gameToConnection when client changes game subscription
-let recentArticles: Map<number, any[]> = new Map<number, any[]>();
-(async () => {
-  const db: MySql.Connection = await getDatabaseConnection(true);
-  const queryString: string = `
-    set @rank = 0;
-    set @current_gameid = 0;
-    SELECT game_id, title, description, link, imageUrl, category, date_published
-    FROM 
-      (SELECT *, @rank := IF(@current_gameid = game_id, @rank + 1, 1) as row_num, @current_gameid := game_id as current_game_id
-      FROM articles order by game_id, date_published desc) ranked
-    WHERE row_num <= 8;`;
-  const response: any = await db.query(queryString);
-  const rows: any = response[0][2];
-  convertRows(rows);
-  console.log(recentArticles);
-})();
-
-function convertRows(rows: any): any {
-  for (let i = 0; i < rows.length; i++) {
-    const row = rows[i];
-    const gameID: number = row.game_id;
-    if (!recentArticles.has(gameID)) recentArticles.set(gameID, []);
-    recentArticles.get(gameID).push(row);
-  }
-}
-
 class WebsocketServer {
   private _server: WebSocket.Server;
   private gameToConnection: Map<number, any[]> = new Map<number, any[]>();
@@ -143,6 +114,77 @@ class SqsLongPoll {
     });
   }
 }
+
+interface Article {
+  title: string;
+  game_id: number;
+  category: string;
+  link: string;
+  date_published: Date;
+  imageUrl?: string;
+  description?: string;
+}
+
+class ArticleStore {
+  private articles: Map<number, Article[]>;
+  private maxArticlesPerGame: number;
+
+  constructor(maxArticlesPerGame: number) {
+    this.maxArticlesPerGame = maxArticlesPerGame;
+    this.articles = new Map<number, Article[]>();
+  }
+
+  getArticles(): Map<number, Article[]> {
+    return this.articles;
+  }
+
+  insert(article: Article): void {
+    const gameID: number = article.game_id;
+    if (!this.articles.has(gameID)) this.articles.set(gameID, []);
+    const gameArticleList: Article[] = this.articles.get(gameID);
+    if (gameArticleList.length >= this.maxArticlesPerGame) {
+      gameArticleList.pop();
+    }
+    this.sortedInsert(gameArticleList, article);
+  }
+
+  private sortedInsert(gameArticleList: Article[], article: Article): void {
+    for (let i = 0; i < gameArticleList.length; i++) {
+      const currentArticle = gameArticleList[i];
+      if (
+        article.date_published >= currentArticle.date_published &&
+        article.title !== currentArticle.title
+      ) {
+        gameArticleList.splice(i, 0, article);
+        return;
+      }
+    }
+    gameArticleList.push(article);
+    return;
+  }
+}
+
+// TODO: When we get new articles, we have to update `recentArticles`. Insert front delete back
+// TODO: Also need to broadcast to the connections that are subscribed
+// TODO: Update gameToConnection when client changes game subscription
+const recentArticles: ArticleStore = new ArticleStore(8);
+(async () => {
+  const db: MySql.Connection = await getDatabaseConnection(true);
+  const queryString: string = `
+    set @rank = 0;
+    set @current_gameid = 0;
+    SELECT game_id, title, description, link, imageUrl, category, date_published
+    FROM 
+      (SELECT *, @rank := IF(@current_gameid = game_id, @rank + 1, 1) as row_num, @current_gameid := game_id as current_game_id
+      FROM articles order by game_id, date_published desc) ranked
+    WHERE row_num <= 8;`;
+  const response: any = await db.query(queryString);
+  const rows: Article[] = response[0][2];
+  rows.forEach((row: Article) => {
+    recentArticles.insert(row);
+  });
+  console.log(recentArticles.getArticles());
+})();
 
 const websocket: WebsocketServer = new WebsocketServer();
 const sqsPoll = new SqsLongPoll(process.env.websocketQueueUrl);
