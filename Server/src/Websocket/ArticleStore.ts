@@ -33,10 +33,14 @@ export class ArticleStore {
   }
 
   private sortedInsert(gameArticleList: Article[], article: Article): void {
+    const articleDatePublish: Date =
+      typeof article.date_published === "string"
+        ? new Date(article.date_published)
+        : article.date_published;
     for (let i = 0; i < gameArticleList.length; i++) {
       const currentArticle = gameArticleList[i];
-      if (article.title === currentArticle.title) return;
-      if (article.date_published >= currentArticle.date_published) {
+      if (article.id === currentArticle.id) return;
+      if (articleDatePublish >= currentArticle.date_published) {
         gameArticleList.splice(i, 0, article);
         return;
       }

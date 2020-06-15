@@ -20,6 +20,15 @@ class WebsocketServer {
     return this._server;
   }
 
+  public broadcastToGroup(gameID: number, articleString: string) {
+    const connections: any[] = this.gameToConnection.get(gameID);
+    if (connections) {
+      connections.forEach((connection) => {
+        connection.send(articleString);
+      });
+    }
+  }
+
   private initServer(): WebSocket.Server {
     const wss: WebSocket.Server = new WebSocket.Server({ port: 9000 });
     return wss;
@@ -99,60 +108,15 @@ class WebsocketServer {
   }
 }
 
-// class SqsLongPoll {
-//   private queueUrl: string;
-//   private consumer: SqsConsumer.Consumer;
-
-//   constructor(queueUrl: string) {
-//     this.queueUrl = queueUrl;
-//     this.consumer = this.createConsumer();
-//     this.setErrorHandlers();
-//   }
-
-//   setErrorHandlers(): void {
-//     this.consumer.on("error", (err: any) => {
-//       console.error(err.message);
-//     });
-
-//     this.consumer.on("processing_error", (err: any) => {
-//       console.error(err.message);
-//     });
-//   }
-
-//   start(): void {
-//     this.consumer.start();
-//   }
-
-//   stop(): void {
-//     this.consumer.stop();
-//   }
-
-//   createConsumer(): SqsConsumer.Consumer {
-//     const app: SqsConsumer.Consumer = SqsConsumer.Consumer.create({
-//       queueUrl: this.queueUrl,
-//       handleMessage: this.handleMessage,
-//     });
-//     return app;
-//   }
-
-//   async handleMessage(message: any) {
-//     const jsonString: string = message.Body;
-//     const body: any = JSON.parse(jsonString);
-//     console.log(body);
-//     // TODO: When we get new articles, we have to update `recentArticles`.
-//     // TODO: Broadcast somehow. How do i get websocket object. Maybe I don't encapsulate the SQS poller in a class.
-//   }
-// }
-
-async function handleMessage(message: any) {
+async function handleMessage(message: any, websocketObj: WebsocketServer) {
   const jsonString: string = message.Body;
-  const body: any = JSON.parse(jsonString);
-  console.log(body);
-  const gameID: number = body.game_id;
-  console.log(gameID);
+  const articles: Article[] = JSON.parse(jsonString);
+  const gameID: number = articles[0].game_id;
 
-  // TODO: When we get new articles, we have to update `recentArticles`.
-  // TODO: Broadcast somehow. How do i get websocket object. Maybe I don't encapsulate the SQS poller in a class.
+  websocketObj.broadcastToGroup(gameID, jsonString);
+  articles.forEach((article: Article) => {
+    recentArticles.insert(article);
+  });
 }
 
 const recentArticles: ArticleStore = new ArticleStore(5);
@@ -172,10 +136,10 @@ const recentArticles: ArticleStore = new ArticleStore(5);
     recentArticles.insert(row);
   });
 
-  const websocket: WebsocketServer = new WebsocketServer();
+  const websocketObj: WebsocketServer = new WebsocketServer();
   const consumer: SqsConsumer.Consumer = SqsConsumer.Consumer.create({
     queueUrl: process.env.websocketQueueUrl,
-    handleMessage: handleMessage,
+    handleMessage: async (message: any) => await handleMessage(message, websocketObj),
   });
   consumer.on("error", (err: any) => {
     console.error(err.message);
