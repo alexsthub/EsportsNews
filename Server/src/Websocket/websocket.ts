@@ -11,10 +11,12 @@ interface SubscriptionObj {
 }
 
 class WebsocketServer {
+  private nextID: number;
   private _server: WebSocket.Server;
   private gameToConnection: Map<number, any[]> = new Map<number, any[]>();
 
   constructor() {
+    this.nextID = 0;
     this._server = this.initServer();
     this.setConnectionHandler();
     this.setBrokenConnectionHandler();
@@ -41,9 +43,15 @@ class WebsocketServer {
   private setConnectionHandler(): void {
     this._server.on("connection", (ws: any) => {
       ws.isAlive = true;
+      ws.id = ++this.nextID;
+      ws.subscriptions = [];
 
       ws.on("pong", () => {
         ws.isAlive = true;
+      });
+
+      ws.on("close", () => {
+        this.removeFromConnectionMap(ws, ws.subscriptions);
       });
 
       ws.on("message", (message: any) => {
@@ -95,8 +103,8 @@ class WebsocketServer {
       if (!mapping.has(gameID)) mapping.set(gameID, []);
       const connectionList = mapping.get(gameID);
       connectionList.push(socket);
+      socket.subscriptions.push(gameID);
     });
-    console.log(this.gameToConnection);
   }
 
   private updateConnectionMap(socket: any, updates: any): void {
@@ -112,14 +120,23 @@ class WebsocketServer {
   }
 
   private removeFromConnectionMap(socket: any, unsubscribeIDs: number[]) {
-    // TODO: Remove ws connection from map
+    unsubscribeIDs.forEach((id: number) => {
+      if (this.gameToConnection.has(id)) {
+        const connectionList: any[] = this.gameToConnection.get(id);
+        const filteredList: any[] = connectionList.filter((c) => c.id !== socket.id);
+        this.gameToConnection.set(id, filteredList);
+      }
+    });
+    socket.subscriptions = socket.subscriptions.filter((x: number) => !unsubscribeIDs.includes(x));
   }
 
-  // TODO: When you close a connection, I need to remove from subscriptions as well.
   setBrokenConnectionHandler(): void {
     setInterval(() => {
       this._server.clients.forEach((ws: any) => {
-        if (!ws.isAlive) return ws.terminate();
+        if (!ws.isAlive) {
+          this.removeFromConnectionMap(ws, ws.connections);
+          return ws.terminate();
+        }
 
         ws.isAlive = false;
         ws.ping(null, false, true);
