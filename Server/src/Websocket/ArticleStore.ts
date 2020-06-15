@@ -1,4 +1,5 @@
 export interface Article {
+  id: number;
   title: string;
   game_id: number;
   category: string;

@@ -20,12 +20,12 @@ class WebsocketServer {
     return this._server;
   }
 
-  initServer(): WebSocket.Server {
+  private initServer(): WebSocket.Server {
     const wss: WebSocket.Server = new WebSocket.Server({ port: 9000 });
     return wss;
   }
 
-  setConnectionHandler(): void {
+  private setConnectionHandler(): void {
     this._server.on("connection", (ws: any) => {
       ws.isAlive = true;
 
@@ -36,33 +36,59 @@ class WebsocketServer {
       ws.on("message", (message: any) => {
         const body: any = JSON.parse(message);
 
-        const gameIDs: number[] = body.gameIDs;
-        const init: boolean = body.init;
-        if (init) this.addToConnectionMap(ws, gameIDs);
+        const subscriptions: any = body.subscriptions;
+        const type: string = body.type;
+        // TODO: 1.) "init" connection => addToConnectionMap, 2.) "update" => updateConnectionMap
+        if (type === "init") this.addToConnectionMap(ws, subscriptions);
+        // else if (type === "update") this.updateConnectionMap(ws, subscriptions);
 
-        const newArticles: any = this.checkForNewArticles(gameIDs);
-        ws.send(`I heard you said: ${message}`);
+        const newArticles: any = this.checkForNewArticles(subscriptions);
+        const ret: string = JSON.stringify(newArticles);
+        ws.send(ret);
       });
     });
   }
 
-  checkForNewArticles(gameIDs: number[]) {
-    console.log(recentArticles);
+  // Subscriptions is an object where key = gameID and value is list of sorted articleIDs
+  private checkForNewArticles(subscriptions: any): any {
+    let newArticles: any = {};
+    const serverArticles: Map<number, Article[]> = recentArticles.getArticles();
+    Object.keys(subscriptions).forEach((strGameID: string) => {
+      const gameID: number = Number(strGameID);
+      const clientArticleIds: number[] = subscriptions[gameID];
+      const serverArticlesForGame: Article[] = serverArticles.get(gameID);
+
+      const res: Article[] = serverArticlesForGame.filter(
+        (serverArticle) =>
+          !clientArticleIds.some((clientArticleID) => clientArticleID === serverArticle.id)
+      );
+      if (res.length > 0) {
+        newArticles[gameID] = res;
+      }
+    });
+    return newArticles;
   }
 
-  addToConnectionMap(socket: any, gameIDs: number[]): void {
-    gameIDs.forEach((id: number) => {
+  private addToConnectionMap(socket: any, subscriptions: any): void {
+    Object.keys(subscriptions).forEach((strGameID: string) => {
+      const gameID: number = Number(strGameID);
       const mapping: Map<number, any[]> = this.gameToConnection;
-      if (!mapping.has(id)) mapping.set(id, []);
-      const connectionList = mapping.get(id);
+      if (!mapping.has(gameID)) mapping.set(gameID, []);
+      const connectionList = mapping.get(gameID);
       connectionList.push(socket);
     });
     console.log(this.gameToConnection);
   }
 
+  // TODO: Update gameToConnection when client changes game subscription
+  private updateConnectionMap(socket: any, subscriptions: any): void {
+    //
+  }
+
+  // TODO: When you close a connection, I need to remove from subscriptions as well.
   setBrokenConnectionHandler(): void {
     setInterval(() => {
-      websocket.server.clients.forEach((ws: any) => {
+      this._server.clients.forEach((ws: any) => {
         if (!ws.isAlive) return ws.terminate();
 
         ws.isAlive = false;
@@ -80,6 +106,16 @@ class SqsLongPoll {
     this.queueUrl = queueUrl;
     this.consumer = this.createConsumer();
     this.setErrorHandlers();
+  }
+
+  setErrorHandlers(): void {
+    this.consumer.on("error", (err: any) => {
+      console.error(err.message);
+    });
+
+    this.consumer.on("processing_error", (err: any) => {
+      console.error(err.message);
+    });
   }
 
   start(): void {
@@ -102,41 +138,29 @@ class SqsLongPoll {
     const jsonString: string = message.Body;
     const body: any = JSON.parse(jsonString);
     console.log(body);
+    // TODO: When we get new articles, we have to update `recentArticles`.
     // TODO: Broadcast somehow. How do i get websocket object. Maybe I don't encapsulate the SQS poller in a class.
-  }
-
-  setErrorHandlers(): void {
-    this.consumer.on("error", (err: any) => {
-      console.error(err.message);
-    });
-
-    this.consumer.on("processing_error", (err: any) => {
-      console.error(err.message);
-    });
   }
 }
 
-// TODO: When we get new articles, we have to update `recentArticles`. Insert front delete back
-// TODO: Update gameToConnection when client changes game subscription
 const recentArticles: ArticleStore = new ArticleStore(8);
 (async () => {
   const db: MySql.Connection = await getDatabaseConnection(true);
   const queryString: string = `
     set @rank = 0;
     set @current_gameid = 0;
-    SELECT game_id, title, description, link, imageUrl, category, date_published
+    SELECT id, game_id, title, description, link, imageUrl, category, date_published
     FROM 
       (SELECT *, @rank := IF(@current_gameid = game_id, @rank + 1, 1) as row_num, @current_gameid := game_id as current_game_id
       FROM articles order by game_id, date_published desc) ranked
-    WHERE row_num <= 8;`;
+    WHERE row_num <= 5;`;
   const response: any = await db.query(queryString);
   const rows: Article[] = response[0][2];
   rows.forEach((row: Article) => {
     recentArticles.insert(row);
   });
-  console.log(recentArticles.getArticles());
-})();
 
-const websocket: WebsocketServer = new WebsocketServer();
-const sqsPoll = new SqsLongPoll(process.env.websocketQueueUrl);
-sqsPoll.start();
+  const websocket: WebsocketServer = new WebsocketServer();
+  // const sqsPoll = new SqsLongPoll(process.env.websocketQueueUrl);
+  // sqsPoll.start();
+})();
