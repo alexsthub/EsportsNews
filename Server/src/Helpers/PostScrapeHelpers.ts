@@ -105,16 +105,15 @@ export function produceOverwatchDetailsMessagesToSQS(newArticles: Data[]): void 
 
 export function sendArticlesToWebsocketServer(newArticles: ArticleResponse[]): void {
   const sqs = new AWS.SQS();
-  newArticles.forEach((article: Data) => {
-    const message: string = JSON.stringify(article);
-    const params: any = {
-      MessageBody: message,
-      DelaySeconds: 0,
-      QueueUrl: process.env.websocketQueueUrl,
-    };
-    sqs.sendMessage(params, function (err: any, _: any) {
-      if (err) console.log(err);
-    });
+
+  const message: string = JSON.stringify(newArticles);
+  const params: any = {
+    MessageBody: message,
+    DelaySeconds: 0,
+    QueueUrl: process.env.websocketQueueUrl,
+  };
+  sqs.sendMessage(params, function (err: any, _: any) {
+    if (err) console.log(err);
   });
   return;
 }

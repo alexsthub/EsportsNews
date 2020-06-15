@@ -148,6 +148,9 @@ async function handleMessage(message: any) {
   const jsonString: string = message.Body;
   const body: any = JSON.parse(jsonString);
   console.log(body);
+  const gameID: number = body.game_id;
+  console.log(gameID);
+
   // TODO: When we get new articles, we have to update `recentArticles`.
   // TODO: Broadcast somehow. How do i get websocket object. Maybe I don't encapsulate the SQS poller in a class.
 }
