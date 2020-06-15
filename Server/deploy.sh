@@ -2,16 +2,18 @@ echo "compiling..."
 tsc
 
 echo "installing production modules..."
+npm uninstall sqs-consumer
 rm -r node_modules
 npm install -production
 
 echo "zipping packages..."
 cd build
-zip -r ../scrape.zip .
+zip -r ../scrape.zip . -x "./Websocket/*"
 cd ..
 zip -ur scrape.zip node_modules
 
 echo "installing dev dependencies for local machine..."
+npm install --save sqs-consumer
 npm install --only=dev
 
 echo "uploading deployment package..."
