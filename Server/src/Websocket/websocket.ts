@@ -6,6 +6,10 @@ import { Article, ArticleStore } from "./ArticleStore";
 AWS.config.update({ region: "us-west-2" });
 import getDatabaseConnection from "../db/dbConnect";
 
+interface SubscriptionObj {
+  [key: number]: number[];
+}
+
 class WebsocketServer {
   private _server: WebSocket.Server;
   private gameToConnection: Map<number, any[]> = new Map<number, any[]>();
@@ -45,15 +49,21 @@ class WebsocketServer {
       ws.on("message", (message: any) => {
         const body: any = JSON.parse(message);
 
-        const subscriptions: any = body.subscriptions;
+        const subscriptions: SubscriptionObj = body.subscriptions;
         const type: string = body.type;
-        // TODO: 1.) "init" connection => addToConnectionMap, 2.) "update" => updateConnectionMap
-        if (type === "init") this.addToConnectionMap(ws, subscriptions);
-        else if (type === "update") this.updateConnectionMap(ws, body.updates);
-
-        const newArticles: any = this.checkForNewArticles(subscriptions);
-        const ret: string = JSON.stringify(newArticles);
-        ws.send(ret);
+        if (type === "init") {
+          this.addToConnectionMap(ws, subscriptions);
+          const newArticles: any = this.checkForNewArticles(subscriptions);
+          const ret: string = JSON.stringify(newArticles);
+          ws.send(ret);
+        } else if (type === "update") {
+          this.updateConnectionMap(ws, body.updates);
+          if (body.updates.additions) {
+            const newArticles: any = this.checkForNewArticles(body.updates.additions);
+            const ret: string = JSON.stringify(newArticles);
+            ws.send(ret);
+          }
+        }
       });
     });
   }
@@ -89,10 +99,20 @@ class WebsocketServer {
     console.log(this.gameToConnection);
   }
 
-  // TODO: Update gameToConnection when client changes game subscription
   private updateConnectionMap(socket: any, updates: any): void {
     if (!updates) return;
-    //
+    if (updates.additions) {
+      const newSubscriptions: SubscriptionObj = updates.additions;
+      this.addToConnectionMap(socket, newSubscriptions);
+    }
+    if (updates.removals) {
+      const unsubscribeIDs: number[] = updates.removals;
+      this.removeFromConnectionMap(socket, unsubscribeIDs);
+    }
+  }
+
+  private removeFromConnectionMap(socket: any, unsubscribeIDs: number[]) {
+    // TODO: Remove ws connection from map
   }
 
   // TODO: When you close a connection, I need to remove from subscriptions as well.
