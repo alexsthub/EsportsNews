@@ -1,6 +1,7 @@
 import moment from "moment";
 import Data from "../Models/Data";
 import AWS from "aws-sdk";
+import ArticleResponse from "../Models/ArticleResponse";
 
 // Query the most recent 30 articles to use as reference to see if they exist.
 export async function getArticlesByGameId(gameID: number, size: number, db: any): Promise<any> {
@@ -23,12 +24,22 @@ export function checkForNewArticles(input: Data[], existing: any): Data[] {
   return ret;
 }
 
-export async function insertArticlesToDatabase(newArticles: Data[], gameID: number, db: any) {
+export async function insertArticlesToDatabase(
+  newArticles: Data[],
+  gameID: number,
+  db: any
+): Promise<ArticleResponse[]> {
   const formattedInserts = formatArticlesToInsertStatements(newArticles, gameID);
   const queryString =
     "INSERT INTO articles (title, description, link, imageUrl, category, game_id, date_published, date_entered) VALUES ?";
   const [result, _] = await db.query(queryString, [formattedInserts]);
   console.log(`Inserted ${result.affectedRows} rows.`);
+  const firstInsertID: number = result.insertId;
+  const getArticlesQuery: string =
+    "SELECT id, title, description, link, imageUrl, category, game_id, date_published FROM articles WHERE game_id = ? AND id >= ?";
+  const response = await db.query(getArticlesQuery, [gameID, firstInsertID]);
+  const articles: ArticleResponse[] = response[0];
+  return articles;
 }
 
 export function formatArticlesToInsertStatements(newArticles: Data[], gameID: number) {
@@ -92,7 +103,7 @@ export function produceOverwatchDetailsMessagesToSQS(newArticles: Data[]): void 
   return;
 }
 
-export function sendArticlesToWebsocketServer(newArticles: Data[]): void {
+export function sendArticlesToWebsocketServer(newArticles: ArticleResponse[]): void {
   const sqs = new AWS.SQS();
   newArticles.forEach((article: Data) => {
     const message: string = JSON.stringify(article);

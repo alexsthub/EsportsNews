@@ -1,5 +1,6 @@
 import MySql from "mysql2/promise";
 import Data from "./Models/Data";
+import ArticleResponse from "./Models/ArticleResponse";
 import Request from "./Models/Request";
 import Scraper from "./Models/Scraper";
 import getDatabaseConnection from "./db/dbConnect";
@@ -35,8 +36,12 @@ AWS.config.update({ region: "us-west-2" });
     if (isOverwatchNews(requestMessage)) {
       produceOverwatchDetailsMessagesToSQS(newArticles);
     } else {
-      insertArticlesToDatabase(newArticles, requestMessage.gameID, db);
-      sendArticlesToWebsocketServer(newArticles);
+      const articles: ArticleResponse[] = await insertArticlesToDatabase(
+        newArticles,
+        requestMessage.gameID,
+        db
+      );
+      sendArticlesToWebsocketServer(articles);
     }
   }
   await db.end();
@@ -62,8 +67,12 @@ exports.handler = async (event: any) => {
     if (isOverwatchNews(requestMessage)) {
       produceOverwatchDetailsMessagesToSQS(newArticles);
     } else {
-      insertArticlesToDatabase(newArticles, requestMessage.gameID, db);
-      sendArticlesToWebsocketServer(newArticles);
+      const articles: ArticleResponse[] = await insertArticlesToDatabase(
+        newArticles,
+        requestMessage.gameID,
+        db
+      );
+      sendArticlesToWebsocketServer(articles);
     }
   }
   await db.end();

@@ -40,7 +40,7 @@ class WebsocketServer {
         const type: string = body.type;
         // TODO: 1.) "init" connection => addToConnectionMap, 2.) "update" => updateConnectionMap
         if (type === "init") this.addToConnectionMap(ws, subscriptions);
-        // else if (type === "update") this.updateConnectionMap(ws, subscriptions);
+        else if (type === "update") this.updateConnectionMap(ws, body.updates);
 
         const newArticles: any = this.checkForNewArticles(subscriptions);
         const ret: string = JSON.stringify(newArticles);
@@ -81,7 +81,8 @@ class WebsocketServer {
   }
 
   // TODO: Update gameToConnection when client changes game subscription
-  private updateConnectionMap(socket: any, subscriptions: any): void {
+  private updateConnectionMap(socket: any, updates: any): void {
+    if (!updates) return;
     //
   }
 
@@ -98,52 +99,60 @@ class WebsocketServer {
   }
 }
 
-class SqsLongPoll {
-  private queueUrl: string;
-  private consumer: SqsConsumer.Consumer;
+// class SqsLongPoll {
+//   private queueUrl: string;
+//   private consumer: SqsConsumer.Consumer;
 
-  constructor(queueUrl: string) {
-    this.queueUrl = queueUrl;
-    this.consumer = this.createConsumer();
-    this.setErrorHandlers();
-  }
+//   constructor(queueUrl: string) {
+//     this.queueUrl = queueUrl;
+//     this.consumer = this.createConsumer();
+//     this.setErrorHandlers();
+//   }
 
-  setErrorHandlers(): void {
-    this.consumer.on("error", (err: any) => {
-      console.error(err.message);
-    });
+//   setErrorHandlers(): void {
+//     this.consumer.on("error", (err: any) => {
+//       console.error(err.message);
+//     });
 
-    this.consumer.on("processing_error", (err: any) => {
-      console.error(err.message);
-    });
-  }
+//     this.consumer.on("processing_error", (err: any) => {
+//       console.error(err.message);
+//     });
+//   }
 
-  start(): void {
-    this.consumer.start();
-  }
+//   start(): void {
+//     this.consumer.start();
+//   }
 
-  stop(): void {
-    this.consumer.stop();
-  }
+//   stop(): void {
+//     this.consumer.stop();
+//   }
 
-  createConsumer(): SqsConsumer.Consumer {
-    const app: SqsConsumer.Consumer = SqsConsumer.Consumer.create({
-      queueUrl: this.queueUrl,
-      handleMessage: this.handleMessage,
-    });
-    return app;
-  }
+//   createConsumer(): SqsConsumer.Consumer {
+//     const app: SqsConsumer.Consumer = SqsConsumer.Consumer.create({
+//       queueUrl: this.queueUrl,
+//       handleMessage: this.handleMessage,
+//     });
+//     return app;
+//   }
 
-  async handleMessage(message: any) {
-    const jsonString: string = message.Body;
-    const body: any = JSON.parse(jsonString);
-    console.log(body);
-    // TODO: When we get new articles, we have to update `recentArticles`.
-    // TODO: Broadcast somehow. How do i get websocket object. Maybe I don't encapsulate the SQS poller in a class.
-  }
+//   async handleMessage(message: any) {
+//     const jsonString: string = message.Body;
+//     const body: any = JSON.parse(jsonString);
+//     console.log(body);
+//     // TODO: When we get new articles, we have to update `recentArticles`.
+//     // TODO: Broadcast somehow. How do i get websocket object. Maybe I don't encapsulate the SQS poller in a class.
+//   }
+// }
+
+async function handleMessage(message: any) {
+  const jsonString: string = message.Body;
+  const body: any = JSON.parse(jsonString);
+  console.log(body);
+  // TODO: When we get new articles, we have to update `recentArticles`.
+  // TODO: Broadcast somehow. How do i get websocket object. Maybe I don't encapsulate the SQS poller in a class.
 }
 
-const recentArticles: ArticleStore = new ArticleStore(8);
+const recentArticles: ArticleStore = new ArticleStore(5);
 (async () => {
   const db: MySql.Connection = await getDatabaseConnection(true);
   const queryString: string = `
@@ -161,6 +170,16 @@ const recentArticles: ArticleStore = new ArticleStore(8);
   });
 
   const websocket: WebsocketServer = new WebsocketServer();
-  // const sqsPoll = new SqsLongPoll(process.env.websocketQueueUrl);
-  // sqsPoll.start();
+  const consumer: SqsConsumer.Consumer = SqsConsumer.Consumer.create({
+    queueUrl: process.env.websocketQueueUrl,
+    handleMessage: handleMessage,
+  });
+  consumer.on("error", (err: any) => {
+    console.error(err.message);
+  });
+
+  consumer.on("processing_error", (err: any) => {
+    console.error(err.message);
+  });
+  consumer.start();
 })();
