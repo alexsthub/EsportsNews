@@ -82,6 +82,7 @@ export function isOverwatchNews(requestMessage: any): boolean {
 }
 
 export function produceOverwatchDetailsMessagesToSQS(newArticles: Data[]): void {
+  console.log("Sending overwatch details messages to SQS");
   const sqs = new AWS.SQS();
   newArticles.forEach((article: Data) => {
     const newMessage: any = {
@@ -90,6 +91,7 @@ export function produceOverwatchDetailsMessagesToSQS(newArticles: Data[]): void 
       article: article,
     };
     const messageString: string = JSON.stringify(newMessage);
+    console.log(messageString);
     const params: any = {
       MessageBody: messageString,
       DelaySeconds: 0,
@@ -107,6 +109,8 @@ export function sendArticlesToWebsocketServer(newArticles: ArticleResponse[]): v
   const sqs = new AWS.SQS();
 
   const message: string = JSON.stringify(newArticles);
+  console.log("Sending new article to websocket server");
+  console.log(message);
   const params: any = {
     MessageBody: message,
     DelaySeconds: 0,
