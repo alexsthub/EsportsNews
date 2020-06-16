@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-import "../App.css";
+import "../styles/App.css";
 
 export default class GameListing extends React.Component {
   render() {

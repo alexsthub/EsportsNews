@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
-import "../ArticleStyle.css";
-import "../App.css";
+import "../styles/ArticleStyle.css";
+import "../styles/App.css";
 
 export default class Article extends React.Component {
   handleClick = (e, link) => {

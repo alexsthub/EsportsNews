@@ -1,5 +1,5 @@
 import React, { createRef } from "react";
-import "./App.css";
+import "./styles/App.css";
 
 import { CSSTransition } from "react-transition-group";
 import GameContainer from "./components/GameContainer";

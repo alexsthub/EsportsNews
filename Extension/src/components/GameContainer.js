@@ -1,7 +1,7 @@
 import React from "react";
 import GameListing from "./GameListing";
 import PropTypes from "prop-types";
-import "../App.css";
+import "../styles/App.css";
 
 export default class GameContainer extends React.Component {
   componentDidMount = () => {

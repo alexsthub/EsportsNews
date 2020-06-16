@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowCircleLeft } from "@fortawesome/free-solid-svg-icons";
-import "../App.css";
+import "../styles/App.css";
 
 import Article from "./Article";
 
