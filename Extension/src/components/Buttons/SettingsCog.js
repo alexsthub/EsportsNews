@@ -2,9 +2,8 @@ import React from "react";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCog } from "@fortawesome/free-solid-svg-icons";
-import "../App.css";
+import "../../App.css";
 
-// TODO: Go to settings
 export default class SettingsCog extends React.Component {
   handleSettings = () => {
     console.log("GO TO SETTINGS SOMEHOW");

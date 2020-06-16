@@ -3,9 +3,6 @@ import PropTypes from "prop-types";
 
 import "../App.css";
 
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
-
 export default class GameListing extends React.Component {
   render() {
     return (
@@ -21,7 +18,6 @@ export default class GameListing extends React.Component {
           />
           <p className="game-title">{this.props.game.name}</p>
         </div>
-        {/* <FontAwesomeIcon className="listing-icon" icon={faChevronRight} /> */}
       </div>
     );
   }

@@ -4,6 +4,7 @@
   width: 200px;
   overflow: hidden;
   transition: 0.3s height ease;
+  background-color: var(--bg);
 }
 
 .horizontal {
