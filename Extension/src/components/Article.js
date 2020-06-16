@@ -26,7 +26,7 @@ export default class Article extends React.Component {
 
     const imageDiv = article.imageUrl ? (
       <div className="image-container">
-        <img className="article-image" src={article.imageUrl} />
+        <img className="article-image" src={article.imageUrl} alt={"article"} />
       </div>
     ) : null;
 

@@ -25,21 +25,12 @@
     "128": "icons/icon128.png"
   },
   "permissions": [
-    "bookmarks",
     "chrome://favicon/",
-    "clipboardRead",
-    "clipboardWrite",
     "contextMenus",
     "cookies",
-    "geolocation",
-    "history",
-    "idle",
-    "management",
     "notifications",
     "alarms",
     "tabs",
-    "tts",
-    "ttsEngine",
-    "unlimitedStorage"
+    "storage"
   ]
 }

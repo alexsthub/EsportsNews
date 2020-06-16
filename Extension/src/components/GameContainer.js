@@ -4,10 +4,6 @@ import PropTypes from "prop-types";
 import "../styles/App.css";
 
 export default class GameContainer extends React.Component {
-  componentDidMount = () => {
-    console.log("MOUNTING");
-  };
-
   render() {
     const gameList = this.props.games.map((game) => {
       return (

@@ -10,6 +10,7 @@ import DarkModeIcon from "./components/Buttons/DarkModeIcon";
 import { ThemeProvider } from "styled-components";
 import { GlobalStyles } from "./components/Themes/GlobalStyles";
 import { lightTheme, darkTheme } from "./components/Themes/Themes";
+/* global chrome */
 
 const games = [
   {
@@ -68,8 +69,7 @@ const games = [
   },
 ];
 
-// TODO: Animation is choppy? Why?
-// TODO: DarkMode on hover is too bright. Can i get a variable somehow or do i need to switch to css variables?
+// TODO: Starts light theme then goes dark. I need to put a loading somewhere.
 export default class App extends React.Component {
   constructor(props) {
     super(props);
@@ -80,6 +80,12 @@ export default class App extends React.Component {
     };
     this.titleRef = createRef();
   }
+
+  componentDidMount = () => {
+    chrome.storage.local.get(["theme"], (result) => {
+      if (result.theme) this.setState({ theme: result.theme });
+    });
+  };
 
   handleGameClick = (e, gameObj) => {
     this.setState({ selectedGame: gameObj });
@@ -94,6 +100,9 @@ export default class App extends React.Component {
   switchTheme = () => {
     const result = this.state.theme === "light" ? "dark" : "light";
     this.setState({ theme: result });
+    chrome.storage.local.set({ theme: result }, () => {
+      console.log("Set theme to " + result);
+    });
   };
 
   render() {
