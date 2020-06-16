@@ -32,24 +32,36 @@ const games = [
   },
   {
     id: 4,
+    name: "Hearthstone",
+    src: "hearthstone.png",
+    alt: "Hearthstone Logo",
+  },
+  {
+    id: 5,
     name: "League of Legends",
     src: "league.png",
     alt: "League of Legends Logo",
   },
   {
-    id: 5,
+    id: 7,
     name: "Legends of Runeterra",
     src: "runeterra.png",
     alt: "Legends of Runeterra Logo",
   },
   {
     id: 6,
+    name: "Overwatch",
+    src: "overwatch.png",
+    alt: "Overwatch Logo",
+  },
+  {
+    id: 9,
     name: "Team Fight Tactics",
     src: "tft.png",
     alt: "Team Fight Tactics Logo",
   },
   {
-    id: 7,
+    id: 8,
     name: "Valorant",
     src: "valorant.png",
     alt: "Valorant Logo",
@@ -57,6 +69,7 @@ const games = [
 ];
 
 // TODO: Animation is choppy? Why?
+// TODO: DarkMode on hover is too bright. Can i get a variable somehow or do i need to switch to css variables?
 export default class App extends React.Component {
   constructor(props) {
     super(props);

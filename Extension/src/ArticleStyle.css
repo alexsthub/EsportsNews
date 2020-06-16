@@ -1,0 +1,32 @@
+.article {
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
+  transition: 0.3s background-color ease-in-out;
+  border-radius: 3px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.article:hover {
+  cursor: pointer;
+  background-color: lightgray;
+}
+
+.article-title {
+  font-size: 0.9rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.article-info {
+  justify-content: space-between;
+}
+
+.article-info p {
+  font-size: 0.7rem;
+  font-style: italic;
+}

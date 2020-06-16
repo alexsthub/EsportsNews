@@ -70,6 +70,7 @@ p {
   padding-top: 0.5em;
   padding-bottom: 0.5em;
   transition: 0.3s background-color ease-in-out;
+  border-radius: 3px;
 }
 
 .back-details:hover {
@@ -107,8 +108,6 @@ p {
   transform: translateX(0%);
   transition: all 0.5s ease;
 }
-
-.secondary-exit {}
 
 .secondary-exit-active {
   transform: translateX(110%);
