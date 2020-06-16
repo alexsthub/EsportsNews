@@ -3,8 +3,7 @@
   padding: 15px;
   width: 200px;
   overflow: hidden;
-  transition: 0.3s height ease;
-  background-color: var(--bg);
+  transition: 0.2s height ease, 0.4s width ease;
 }
 
 .horizontal {

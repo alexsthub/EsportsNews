@@ -3,8 +3,6 @@ import PropTypes from "prop-types";
 import "../ArticleStyle.css";
 import "../App.css";
 
-// TODO: Include image if exists
-// TODO: Include description if exists?
 export default class Article extends React.Component {
   handleClick = (e, link) => {
     e.stopPropagation();
@@ -26,13 +24,22 @@ export default class Article extends React.Component {
     const article = this.props.article;
     const date = this.convertDate(article.date_published);
 
+    const imageDiv = article.imageUrl ? (
+      <div className="image-container">
+        <img className="article-image" src={article.imageUrl} />
+      </div>
+    ) : null;
+
+    const descriptionElement = article.description ? (
+      <p className="article-description limit-text">{article.description}</p>
+    ) : null;
+
     return (
       <div className="article" onClick={(e) => this.handleClick(e, article.link)}>
-        <div>
-          <p>Hello</p>
-        </div>
-        <div>
-          <p className="article-title">{article.title}</p>
+        {imageDiv}
+        <div style={{ width: "100%" }}>
+          <p className="article-title limit-text">{article.title}</p>
+          {descriptionElement}
           <div className="horizontal article-info">
             <p>{date}</p>
             <p>{this.capitalizeFirstLetter(article.category)}</p>

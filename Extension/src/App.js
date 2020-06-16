@@ -100,7 +100,10 @@ export default class App extends React.Component {
     return (
       <ThemeProvider theme={this.state.theme === "light" ? lightTheme : darkTheme}>
         <GlobalStyles />
-        <div className="App" style={{ height: this.state.height }}>
+        <div
+          className="App"
+          style={{ height: this.state.height, width: this.state.selectedGame ? 300 : 200 }}
+        >
           <div style={{ position: "relative" }}>
             <h3 ref={this.titleRef}>ESports News</h3>
             <DarkModeIcon onClick={this.switchTheme} />

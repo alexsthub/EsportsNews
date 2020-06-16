@@ -1,6 +1,8 @@
 .article {
   padding-top: 0.5em;
   padding-bottom: 0.5em;
+  padding-left: 8px;
+  padding-right: 8px;
   transition: 0.3s background-color ease-in-out;
   border-radius: 3px;
   display: flex;
@@ -15,11 +17,18 @@
 
 .article-title {
   font-size: 0.9rem;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
+}
+
+.article-description {
+  font-size: 0.6rem;
+  color: gray;
+}
+
+.article-image {
+  height: 50px;
+  width: 50px;
+  border-radius: 3px;
+  padding-right: 8px;
 }
 
 .article-info {
@@ -29,4 +38,12 @@
 .article-info p {
   font-size: 0.7rem;
   font-style: italic;
+}
+
+.limit-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
 }
