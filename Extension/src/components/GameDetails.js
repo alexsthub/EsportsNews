@@ -83,7 +83,10 @@ export default class GameDetails extends React.Component {
 
     return (
       <div>
-        <div className="back-details horizontal align-center" onClick={this.props.goBack}>
+        <div
+          className="back-details horizontal align-center hover-background"
+          onClick={this.props.goBack}
+        >
           <FontAwesomeIcon
             style={{ marginLeft: 10, marginRight: 10, fontSize: "1.5rem" }}
             icon={faArrowCircleLeft}

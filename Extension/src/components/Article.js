@@ -35,7 +35,7 @@ export default class Article extends React.Component {
     ) : null;
 
     return (
-      <div className="article" onClick={(e) => this.handleClick(e, article.link)}>
+      <div className="article hover-background" onClick={(e) => this.handleClick(e, article.link)}>
         {imageDiv}
         <div style={{ width: "100%" }}>
           <p className="article-title limit-text">{article.title}</p>

@@ -3,16 +3,10 @@
   padding-bottom: 0.5em;
   padding-left: 8px;
   padding-right: 8px;
-  transition: 0.3s background-color ease-in-out;
   border-radius: 3px;
   display: flex;
   flex-direction: row;
   align-items: center;
-}
-
-.article:hover {
-  cursor: pointer;
-  background-color: lightgray;
 }
 
 .article-title {

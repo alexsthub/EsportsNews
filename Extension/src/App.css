@@ -36,15 +36,17 @@ p {
 .game-listing {
   padding-top: 0.5em;
   padding-bottom: 0.5em;
-  transition: 0.3s background-color ease-in-out;
   justify-content: space-between;
   align-items: center;
   border-radius: 3px;
 }
 
+.hover-background {
+  transition: 0.3s background-color ease-in-out;
+}
+
 .game-listing:hover {
   cursor: pointer;
-  background-color: lightgray;
 }
 
 .game-logo {
@@ -54,29 +56,11 @@ p {
   margin-left: 5px;
 }
 
-/* .listing-icon {
-  margin-right: 15px;
-  font-size: 0.7rem;
-  transition: all 0.2s ease-in-out 0s;
-}
-
-.game-listing:hover>.listing-icon {
-  transform: translate(5px, 0px)
-} */
-
-
 .back-details {
   padding-top: 0.5em;
   padding-bottom: 0.5em;
-  transition: 0.3s background-color ease-in-out;
   border-radius: 3px;
 }
-
-.back-details:hover {
-  cursor: pointer;
-  background-color: lightgray;
-}
-
 
 /* CSS Transitions */
 

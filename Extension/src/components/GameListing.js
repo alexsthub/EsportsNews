@@ -7,7 +7,7 @@ export default class GameListing extends React.Component {
   render() {
     return (
       <div
-        className="game-listing horizontal"
+        className="game-listing horizontal hover-background"
         onClick={(e) => this.props.onClick(e, this.props.game)}
       >
         <div className="horizontal align-center">
