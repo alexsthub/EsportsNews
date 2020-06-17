@@ -56,7 +56,6 @@ class WebsocketServer {
 
       ws.on("message", (message: any) => {
         const body: any = JSON.parse(message);
-
         const subscriptions: SubscriptionObj = body.subscriptions;
         const type: string = body.type;
         if (type === "init") {

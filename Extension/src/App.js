@@ -29,6 +29,11 @@ export default class App extends React.Component {
 
   componentDidMount = () => {
     // chrome.storage.local.remove(["subscriptions"]);
+
+    // chrome.storage.local.set({ subscriptions: [8, 4] }, () => {
+    //   console.log("set subscriptions value");
+    // });
+
     chrome.storage.local.get(["theme", "subscriptions", "articles"], (result) => {
       if (result.theme) this.setState({ theme: result.theme });
       if (result.articles) this.setState({ articles: result.articles });
@@ -40,10 +45,6 @@ export default class App extends React.Component {
         this.setState({ subscribedGames: subscribedGames });
       }
     });
-
-    // chrome.storage.local.set({ subscriptions: [1, 5, 7, 8, 4] }, () => {
-    //   console.log("set subscriptions value");
-    // });
 
     // chrome.storage.local.set({ articles: articles }, () => {
     //   console.log("set articles");
