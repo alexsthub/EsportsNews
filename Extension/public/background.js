@@ -1,40 +1,45 @@
-function constructMessageToServer(subscriptions, articles) {
-  const subs = {};
-  if (!subscriptions || subscriptions.length === 0) return null;
-  subscriptions.forEach((subscriptionID) => {
-    const currentArticles = articles ? articles[subscriptionID] : null;
-    if (currentArticles) {
-      const ids = currentArticles.map((article) => article.id);
-      subs[subscriptionID] = ids;
-    } else {
-      subs[subscriptionID] = [];
-    }
-  });
-  const ret = {
-    type: "init",
-    subscriptions: subs,
-  };
-  return JSON.stringify(ret);
-}
+let numNewArticles = 0;
+chrome.browserAction.setBadgeBackgroundColor({ color: "#4688F1" });
 
 const connection = new WebSocket("ws://127.0.0.1:9000");
 connection.addEventListener("open", () => {
-  chrome.storage.local.get(["subscriptions", "articles"], (result) => {
+  chrome.storage.local.get(["subscriptions"], (result) => {
     const subscriptions = result.subscriptions;
-    const articles = result.articles;
-    const message = constructMessageToServer(subscriptions, articles);
-    connection.send(message);
+    const message = constructMessageToServer(subscriptions);
+    if (message) connection.send(message);
   });
 });
 
 connection.addEventListener("message", (event) => {
   const message = event.data;
   const newArticles = JSON.parse(message);
-  console.log(newArticles);
-  chrome.storage.local.get(["articles"], (result) => {
-    // TODO: Should the server just return the 5 so that I can just assign the values instead of get the difference?
-  });
+  updateLocalArticles(newArticles);
 });
 
-chrome.browserAction.setBadgeText({ text: "1" });
-chrome.browserAction.setBadgeBackgroundColor({ color: "#4688F1" });
+function constructMessageToServer(subscriptions) {
+  if (!subscriptions || subscriptions.length === 0) return null;
+  const ret = {
+    type: "init",
+    subscriptions: subscriptions,
+  };
+  return JSON.stringify(ret);
+}
+
+function updateLocalArticles(newArticles) {
+  chrome.storage.local.get(["articles"], (result) => {
+    let currentArticles = result.articles;
+    if (!currentArticles) currentArticles = {};
+    Object.keys(newArticles).forEach((key) => {
+      numNewArticles += calculateNumberOfNewArticles(currentArticles[key], newArticles[key]);
+      currentArticles[key] = newArticles[key];
+    });
+    chrome.storage.local.set({ articles: currentArticles });
+    if (numNewArticles > 0) chrome.browserAction.setBadgeText({ text: String(numNewArticles) });
+  });
+}
+
+function calculateNumberOfNewArticles(currentArticles, newArticles) {
+  if (!currentArticles || currentArticles.length === 0) return newArticles.length;
+  const difference = newArticles.filter((a) => !currentArticles.some((b) => a.id === b.id));
+  return difference.length;
+}

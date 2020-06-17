@@ -6,10 +6,6 @@ import { Article, ArticleStore } from "./ArticleStore";
 AWS.config.update({ region: "us-west-2" });
 import getDatabaseConnection from "../db/dbConnect";
 
-interface SubscriptionObj {
-  [key: number]: number[];
-}
-
 class WebsocketServer {
   private nextID: number;
   private _server: WebSocket.Server;
@@ -56,7 +52,7 @@ class WebsocketServer {
 
       ws.on("message", (message: any) => {
         const body: any = JSON.parse(message);
-        const subscriptions: SubscriptionObj = body.subscriptions;
+        const subscriptions: number[] = body.subscriptions;
         const type: string = body.type;
         if (type === "init") {
           this.addToConnectionMap(ws, subscriptions);
@@ -79,25 +75,15 @@ class WebsocketServer {
   private checkForNewArticles(subscriptions: any): any {
     let newArticles: any = {};
     const serverArticles: Map<number, Article[]> = recentArticles.getArticles();
-    Object.keys(subscriptions).forEach((strGameID: string) => {
-      const gameID: number = Number(strGameID);
-      const clientArticleIds: number[] = subscriptions[gameID];
+    subscriptions.forEach((gameID: number) => {
       const serverArticlesForGame: Article[] = serverArticles.get(gameID);
-
-      const res: Article[] = serverArticlesForGame.filter(
-        (serverArticle) =>
-          !clientArticleIds.some((clientArticleID) => clientArticleID === serverArticle.id)
-      );
-      if (res.length > 0) {
-        newArticles[gameID] = res;
-      }
+      newArticles[gameID] = serverArticlesForGame;
     });
     return newArticles;
   }
 
-  private addToConnectionMap(socket: any, subscriptions: any): void {
-    Object.keys(subscriptions).forEach((strGameID: string) => {
-      const gameID: number = Number(strGameID);
+  private addToConnectionMap(socket: any, subscriptions: number[]): void {
+    subscriptions.forEach((gameID: number) => {
       const mapping: Map<number, any[]> = this.gameToConnection;
       if (!mapping.has(gameID)) mapping.set(gameID, []);
       const connectionList = mapping.get(gameID);
@@ -109,7 +95,7 @@ class WebsocketServer {
   private updateConnectionMap(socket: any, updates: any): void {
     if (!updates) return;
     if (updates.additions) {
-      const newSubscriptions: SubscriptionObj = updates.additions;
+      const newSubscriptions: number[] = updates.additions;
       this.addToConnectionMap(socket, newSubscriptions);
     }
     if (updates.removals) {
@@ -148,11 +134,12 @@ async function handleMessage(message: any, websocketObj: WebsocketServer) {
   const jsonString: string = message.Body;
   const articles: Article[] = JSON.parse(jsonString);
   const gameID: number = articles[0].game_id;
-
-  websocketObj.broadcastToGroup(gameID, jsonString);
   articles.forEach((article: Article) => {
     recentArticles.insert(article);
   });
+  const articlesToSend = recentArticles.getArticles().get(gameID);
+  const articlesToSendStr = JSON.stringify(articlesToSend);
+  websocketObj.broadcastToGroup(gameID, articlesToSendStr);
 }
 
 const recentArticles: ArticleStore = new ArticleStore(5);

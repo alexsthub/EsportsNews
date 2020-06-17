@@ -29,6 +29,7 @@ export default class App extends React.Component {
 
   componentDidMount = () => {
     // chrome.storage.local.remove(["subscriptions"]);
+    // chrome.storage.local.remove(["articles"]);
 
     // chrome.storage.local.set({ subscriptions: [8, 4] }, () => {
     //   console.log("set subscriptions value");
@@ -45,10 +46,6 @@ export default class App extends React.Component {
         this.setState({ subscribedGames: subscribedGames });
       }
     });
-
-    // chrome.storage.local.set({ articles: articles }, () => {
-    //   console.log("set articles");
-    // });
   };
 
   handleGameClick = (e, gameObj) => {

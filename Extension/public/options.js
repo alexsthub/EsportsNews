@@ -56,3 +56,7 @@ const games = [
 ];
 
 console.log("HELLO");
+
+// TODO: On save, how do i access the ws object?
+// chrome.runtime.getBackgroundPage() or do I use the messages api?
+// chrome.runtime.getBackgroundPage().update(myData)
