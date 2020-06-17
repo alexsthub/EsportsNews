@@ -16,3 +16,6 @@
 //     // something
 //   }
 // });
+
+chrome.browserAction.setBadgeText({ text: "1" });
+chrome.browserAction.setBadgeBackgroundColor({ color: "#4688F1" });

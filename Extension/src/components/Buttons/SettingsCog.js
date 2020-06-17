@@ -4,9 +4,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCog } from "@fortawesome/free-solid-svg-icons";
 import "../../styles/App.css";
 
+/* global chrome */
+
 export default class SettingsCog extends React.Component {
-  handleSettings = () => {
-    console.log("GO TO SETTINGS SOMEHOW");
+  handleSettings = (e) => {
+    e.stopPropagation();
+    chrome.runtime.openOptionsPage();
   };
 
   render() {

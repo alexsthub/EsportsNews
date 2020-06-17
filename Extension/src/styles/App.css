@@ -41,6 +41,22 @@ p {
   border-radius: 3px;
 }
 
+.go-subscriptions {
+  align-self: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  background-color: black;
+  margin-top: 15px;
+  border-radius: 3px;
+  box-shadow: 3px 3px 2px 1px rgba(0, 0, 0, 0.3);
+}
+
+.go-subscriptions p {
+  color: white;
+}
+
 .hover-background {
   transition: 0.3s background-color ease-in-out;
 }

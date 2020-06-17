@@ -12,6 +12,105 @@ import { GlobalStyles } from "./components/Themes/GlobalStyles";
 import { lightTheme, darkTheme } from "./components/Themes/Themes";
 /* global chrome */
 
+// TODO: Add more articles to local
+// TODO: Starts light theme then goes dark / takes time to load subscribed games... I need to put a loading somewhere!
+export default class App extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      height: null,
+      subscribedGames: [],
+      articles: {},
+      selectedGame: null,
+      theme: "light",
+    };
+    this.titleRef = createRef();
+  }
+
+  componentDidMount = () => {
+    // chrome.storage.local.remove(["subscriptions"]);
+    chrome.storage.local.get(["theme", "subscriptions", "articles"], (result) => {
+      if (result.theme) this.setState({ theme: result.theme });
+      if (result.articles) this.setState({ articles: result.articles });
+      if (result.subscriptions) {
+        const subscribedGames = games.filter((game) =>
+          result.subscriptions.some((subscriptionID) => game.id === subscriptionID)
+        );
+        subscribedGames.sort((a, b) => a.title > b.title);
+        this.setState({ subscribedGames: subscribedGames });
+      }
+    });
+
+    // chrome.storage.local.set({ subscriptions: [1, 5, 7, 8, 4] }, () => {
+    //   console.log("set subscriptions value");
+    // });
+
+    // chrome.storage.local.set({ articles: articles }, () => {
+    //   console.log("set articles");
+    // });
+  };
+
+  handleGameClick = (e, gameObj) => {
+    this.setState({ selectedGame: gameObj });
+  };
+
+  calculateHeight = (element) => {
+    const titleHeight = this.titleRef.current.offsetHeight;
+    const height = element.offsetHeight + titleHeight + 15;
+    this.setState({ height: height });
+  };
+
+  switchTheme = () => {
+    const result = this.state.theme === "light" ? "dark" : "light";
+    this.setState({ theme: result });
+    chrome.storage.local.set({ theme: result });
+  };
+
+  render() {
+    return (
+      <ThemeProvider theme={this.state.theme === "light" ? lightTheme : darkTheme}>
+        <GlobalStyles />
+        <div
+          className="App"
+          style={{ height: this.state.height, width: this.state.selectedGame ? 300 : 200 }}
+        >
+          <div style={{ position: "relative" }}>
+            <h3 ref={this.titleRef}>ESports News</h3>
+            <DarkModeIcon onClick={this.switchTheme} />
+            <SettingsCog />
+          </div>
+
+          <CSSTransition
+            in={this.state.selectedGame === null}
+            timeout={600}
+            classNames="primary"
+            unmountOnExit
+            onEnter={this.calculateHeight}
+          >
+            <GameContainer games={this.state.subscribedGames} onClick={this.handleGameClick} />
+          </CSSTransition>
+
+          <CSSTransition
+            in={this.state.selectedGame !== null}
+            timeout={600}
+            classNames="secondary"
+            unmountOnExit
+            onEnter={this.calculateHeight}
+          >
+            <GameDetails
+              game={this.state.selectedGame}
+              articleList={
+                this.state.selectedGame ? this.state.articles[this.state.selectedGame.id] : []
+              }
+              goBack={() => this.setState({ selectedGame: null })}
+            />
+          </CSSTransition>
+        </div>
+      </ThemeProvider>
+    );
+  }
+}
+
 const games = [
   {
     id: 1,
@@ -68,81 +167,3 @@ const games = [
     alt: "Valorant Logo",
   },
 ];
-
-// TODO: Starts light theme then goes dark. I need to put a loading somewhere.
-export default class App extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      height: null,
-      selectedGame: null,
-      theme: "light",
-    };
-    this.titleRef = createRef();
-  }
-
-  componentDidMount = () => {
-    chrome.storage.local.get(["theme"], (result) => {
-      if (result.theme) this.setState({ theme: result.theme });
-    });
-  };
-
-  handleGameClick = (e, gameObj) => {
-    this.setState({ selectedGame: gameObj });
-  };
-
-  calculateHeight = (element) => {
-    const titleHeight = this.titleRef.current.offsetHeight;
-    const height = element.offsetHeight + titleHeight + 15;
-    this.setState({ height: height });
-  };
-
-  switchTheme = () => {
-    const result = this.state.theme === "light" ? "dark" : "light";
-    this.setState({ theme: result });
-    chrome.storage.local.set({ theme: result }, () => {
-      console.log("Set theme to " + result);
-    });
-  };
-
-  render() {
-    return (
-      <ThemeProvider theme={this.state.theme === "light" ? lightTheme : darkTheme}>
-        <GlobalStyles />
-        <div
-          className="App"
-          style={{ height: this.state.height, width: this.state.selectedGame ? 300 : 200 }}
-        >
-          <div style={{ position: "relative" }}>
-            <h3 ref={this.titleRef}>ESports News</h3>
-            <DarkModeIcon onClick={this.switchTheme} />
-            <SettingsCog />
-          </div>
-
-          <CSSTransition
-            in={this.state.selectedGame === null}
-            timeout={600}
-            classNames="primary"
-            unmountOnExit
-            onEnter={this.calculateHeight}
-          >
-            <GameContainer games={games} onClick={this.handleGameClick} />
-          </CSSTransition>
-
-          <CSSTransition
-            in={this.state.selectedGame !== null}
-            timeout={600}
-            classNames="secondary"
-            unmountOnExit
-            onEnter={this.calculateHeight}
-          >
-            <GameDetails
-              game={this.state.selectedGame}
-              goBack={() => this.setState({ selectedGame: null })}
-            />
-          </CSSTransition>
-        </div>
-      </ThemeProvider>
-    );
-  }
-}
