@@ -44,6 +44,6 @@ function calculateNumberOfNewArticles(currentArticles, newArticles) {
   return difference.length;
 }
 
-function test() {
-  console.log("testing function");
+function sendUpdates(updates) {
+  console.log(updates);
 }

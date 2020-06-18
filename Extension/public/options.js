@@ -56,28 +56,19 @@ const games = [
 ];
 let subscribed = [];
 let unsubscribed = [];
-
-// chrome.storage.local.get(["subscriptions"], (result) => {
-//   const subscriptions = result.subscriptions;
-//   games.forEach(game => {
-//     if (subscriptions.includes(game.id)) {
-//       subscribed.push(game);
-//     } else {
-//       unsubscribed.push(game);
-//     }
-//   })
-//   subscribed.sort((a,b) => a.name > b.name)
-//   unsubscribed.sort((a,b) => a.name > b.name)
-// });
+let changes = {};
 
 function getSubscribedGames() {
-  const subscriptions = [2, 8];
-  games.forEach((game) => {
-    if (subscriptions.includes(game.id)) {
-      subscribed.push(game);
-    } else {
-      unsubscribed.push(game);
-    }
+  chrome.storage.local.get(["subscriptions"], (result) => {
+    const subscriptions = result.subscriptions;
+    games.forEach((game) => {
+      if (subscriptions.includes(game.id)) {
+        subscribed.push(game);
+      } else {
+        unsubscribed.push(game);
+      }
+    });
+    renderGames(subscribed, unsubscribed);
   });
 }
 
@@ -88,13 +79,33 @@ function renderGames(subscribed, unsubscribed) {
   $("div.unsubscribed-games").empty();
   renderGame(subscribed, true);
   renderGame(unsubscribed, false);
+
+  renderButton(changes);
+}
+
+function renderButton(changes) {
+  let changed = false;
+  const button = $("div.save-button");
+  for (const key in changes) {
+    if (changes[key] === true) {
+      button.addClass("button-active");
+      changed = true;
+      break;
+    }
+  }
+  if (!changed) button.removeClass("button-active");
 }
 
 function renderGame(games, isSubscribed) {
   const container = isSubscribed ? $("div.subscribed-games") : $("div.unsubscribed-games");
   games.forEach((game) => {
+    let className;
+    const changed = changes[game.id];
+    if (changed) className = "game changed-game";
+    else className = "game";
+
     const gameElement = $(`
-      <div class="game">
+      <div class="${className}">
         <img class="game-logo" src="./gamelogos/${game.src}" alt="${game.alt}" />
         <p class="title">${game.name}</p>
         <div class="option-button">
@@ -122,15 +133,48 @@ function moveGame(game, isSubscribed) {
     unsubscribed = unsubscribed.filter((s) => s.id !== game.id);
     subscribed.push(game);
   }
+  if (game.id in changes) changes[game.id] = !changes[game.id];
+  else changes[game.id] = true;
+
   renderGames(subscribed, unsubscribed);
 }
 
+function sendUpdatesToServer() {
+  let updates = {};
+  for (const strGameID in changes) {
+    if (changes[strGameID]) {
+      const gameID = parseInt(strGameID, 10);
+      const addSubscription = subscribed.some((sub) => sub.id === gameID);
+      if (addSubscription) {
+        if (!updates.hasOwnProperty("additions")) updates.additions = [];
+        updates.additions.push(gameID);
+      } else {
+        if (!updates.hasOwnProperty("removals")) updates.removals = [];
+        updates.removals.push(gameID);
+      }
+    }
+  }
+  // TODO: save locally and send
+  console.log(updates);
+  chrome.runtime.getBackgroundPage().sendUpdates(myData);
+}
+
+function existsInSubscriptions(subscribed, gameID) {
+  for (let i = 0; i < subscribed.length; i++) {
+    const game = subscribed[i];
+    if (game.id === gameID) return true;
+  }
+  return false;
+}
+
+const saveButton = $("div.save-button");
+saveButton.click((event) => {
+  event.stopPropagation();
+  if (saveButton.hasClass("button-active")) {
+    sendUpdatesToServer();
+    changes = {};
+    renderGames(subscribed, unsubscribed);
+  }
+});
+
 getSubscribedGames();
-renderGames(subscribed, unsubscribed);
-
-// TODO: track if there are updates and only when they hit save will I save to storage and send to websocket
-// TODO: Do not allow user to save until valid changes.
-
-// TODO:
-// chrome.extension.getBackgroundPage().test();
-// chrome.runtime.getBackgroundPage().update(myData)
