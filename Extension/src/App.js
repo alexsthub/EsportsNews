@@ -12,7 +12,6 @@ import { GlobalStyles } from "./components/Themes/GlobalStyles";
 import { lightTheme, darkTheme } from "./components/Themes/Themes";
 /* global chrome */
 
-// TODO: Add more articles to local
 // TODO: Starts light theme then goes dark / takes time to load subscribed games... I need to put a loading somewhere!
 export default class App extends React.Component {
   constructor(props) {
@@ -42,7 +41,7 @@ export default class App extends React.Component {
         const subscribedGames = games.filter((game) =>
           result.subscriptions.some((subscriptionID) => game.id === subscriptionID)
         );
-        subscribedGames.sort((a, b) => a.title > b.title);
+        subscribedGames.sort((a, b) => (a.title > b.title ? 1 : -1));
         this.setState({ subscribedGames: subscribedGames });
       }
     });

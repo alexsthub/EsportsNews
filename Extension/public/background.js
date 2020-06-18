@@ -43,3 +43,7 @@ function calculateNumberOfNewArticles(currentArticles, newArticles) {
   const difference = newArticles.filter((a) => !currentArticles.some((b) => a.id === b.id));
   return difference.length;
 }
+
+function test() {
+  console.log("testing function");
+}
