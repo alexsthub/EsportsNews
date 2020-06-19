@@ -154,9 +154,9 @@ function sendUpdatesToServer() {
       }
     }
   }
-  // TODO: save locally and send
-  console.log(updates);
-  chrome.runtime.getBackgroundPage().sendUpdates(myData);
+  const subscribedIDs = subscribed.map((s) => s.id);
+  chrome.storage.local.set({ subscriptions: subscribedIDs });
+  chrome.extension.getBackgroundPage().sendUpdates(updates);
 }
 
 function existsInSubscriptions(subscribed, gameID) {

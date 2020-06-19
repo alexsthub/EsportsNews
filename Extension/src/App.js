@@ -12,7 +12,11 @@ import { GlobalStyles } from "./components/Themes/GlobalStyles";
 import { lightTheme, darkTheme } from "./components/Themes/Themes";
 /* global chrome */
 
+// TODO: Overwatch parser needs to put https:// in front of the imageurl if it does not exist
+
+// TODO: Put numbers and show if an article is new. Border?
 // TODO: Starts light theme then goes dark / takes time to load subscribed games... I need to put a loading somewhere!
+// TODO: Background script needs to read how many new ones there are.
 export default class App extends React.Component {
   constructor(props) {
     super(props);
@@ -27,13 +31,7 @@ export default class App extends React.Component {
   }
 
   componentDidMount = () => {
-    // chrome.storage.local.remove(["subscriptions"]);
     // chrome.storage.local.remove(["articles"]);
-
-    // chrome.storage.local.set({ subscriptions: [8, 4] }, () => {
-    //   console.log("set subscriptions value");
-    // });
-
     chrome.storage.local.get(["theme", "subscriptions", "articles"], (result) => {
       if (result.theme) this.setState({ theme: result.theme });
       if (result.articles) this.setState({ articles: result.articles });
@@ -41,7 +39,7 @@ export default class App extends React.Component {
         const subscribedGames = games.filter((game) =>
           result.subscriptions.some((subscriptionID) => game.id === subscriptionID)
         );
-        subscribedGames.sort((a, b) => (a.title > b.title ? 1 : -1));
+        subscribedGames.sort((a, b) => (a.name > b.name ? 1 : -1));
         this.setState({ subscribedGames: subscribedGames });
       }
     });

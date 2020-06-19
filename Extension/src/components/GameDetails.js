@@ -11,7 +11,6 @@ import Article from "./Article";
 export default class GameDetails extends React.Component {
   render() {
     if (!this.props.game) return null;
-
     const articleList =
       this.props.articleList && this.props.articleList.length > 0 ? (
         this.props.articleList.map((article) => {

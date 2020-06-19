@@ -23,7 +23,6 @@ export default class Article extends React.Component {
   render() {
     const article = this.props.article;
     const date = this.convertDate(article.date_published);
-
     const imageDiv = article.imageUrl ? (
       <div className="image-container">
         <img className="article-image" src={article.imageUrl} alt={"article"} />

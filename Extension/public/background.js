@@ -45,5 +45,12 @@ function calculateNumberOfNewArticles(currentArticles, newArticles) {
 }
 
 function sendUpdates(updates) {
-  console.log(updates);
+  if (updates) {
+    const message = {
+      type: "update",
+      updates: updates,
+    };
+    const messageStr = JSON.stringify(message);
+    connection.send(messageStr);
+  }
 }
