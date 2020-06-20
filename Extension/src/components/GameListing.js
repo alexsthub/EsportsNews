@@ -1,10 +1,23 @@
 import React from "react";
 import PropTypes from "prop-types";
 
+import NotificationBell from "./NotificationBell";
 import "../styles/App.css";
 
 export default class GameListing extends React.Component {
+  calculateNumberNew(articles) {
+    let num = 0;
+    articles.forEach((article) => {
+      if (!article.visited) num += 1;
+    });
+    return num;
+  }
+
   render() {
+    const numberOfNewArticles = this.calculateNumberNew(this.props.articles);
+    const numAlert =
+      numberOfNewArticles > 0 ? <NotificationBell number={numberOfNewArticles} /> : null;
+
     return (
       <div
         className="game-listing horizontal hover-background"
@@ -18,6 +31,7 @@ export default class GameListing extends React.Component {
           />
           <p className="game-title">{this.props.game.name}</p>
         </div>
+        {numAlert}
       </div>
     );
   }

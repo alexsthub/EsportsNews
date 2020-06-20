@@ -30,7 +30,7 @@ function updateLocalArticles(newArticles) {
     let currentArticles = result.articles;
     if (!currentArticles) currentArticles = {};
     Object.keys(newArticles).forEach((key) => {
-      numNewArticles += calculateNumberOfNewArticles(currentArticles[key], newArticles[key]);
+      numNewArticles += determineNewArticles(currentArticles[key], newArticles[key]);
       currentArticles[key] = newArticles[key];
     });
     chrome.storage.local.set({ articles: currentArticles });
@@ -38,10 +38,21 @@ function updateLocalArticles(newArticles) {
   });
 }
 
-function calculateNumberOfNewArticles(currentArticles, newArticles) {
-  if (!currentArticles || currentArticles.length === 0) return newArticles.length;
-  const difference = newArticles.filter((a) => !currentArticles.some((b) => a.id === b.id));
-  return difference.length;
+function determineNewArticles(currentArticles, newArticles) {
+  let numNew = 0;
+  newArticles.forEach((incoming) => {
+    const existingArticle = currentArticles
+      ? currentArticles.find((current) => current.id === incoming.id)
+      : undefined;
+
+    if (!existingArticle || !existingArticle.visited) {
+      incoming.visited = false;
+      numNew += 1;
+    } else {
+      incoming.visited = true;
+    }
+  });
+  return numNew;
 }
 
 function sendUpdates(updates) {

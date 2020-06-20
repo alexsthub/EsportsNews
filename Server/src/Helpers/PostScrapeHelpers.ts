@@ -83,6 +83,7 @@ export function isOverwatchNews(requestMessage: any): boolean {
 
 export function produceOverwatchDetailsMessagesToSQS(newArticles: Data[]): void {
   console.log("Sending overwatch details messages to SQS");
+  AWS.config.update({ region: "us-west-2" });
   const sqs = new AWS.SQS();
   newArticles.forEach((article: Data) => {
     const newMessage: any = {
@@ -98,8 +99,9 @@ export function produceOverwatchDetailsMessagesToSQS(newArticles: Data[]): void 
       QueueUrl: "https://sqs.us-west-2.amazonaws.com/655373160788/articles",
     };
 
-    sqs.sendMessage(params, function (err: any, _: any) {
+    sqs.sendMessage(params, function (err: any, data: any) {
       if (err) console.log(err);
+      else console.log(data);
     });
   });
   return;

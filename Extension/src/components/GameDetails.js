@@ -14,7 +14,7 @@ export default class GameDetails extends React.Component {
     const articleList =
       this.props.articleList && this.props.articleList.length > 0 ? (
         this.props.articleList.map((article) => {
-          return <Article article={article} />;
+          return <Article article={article} onClick={this.props.onClick} />;
         })
       ) : (
         <p style={{ marginTop: 15 }}>There are no available articles at this time.</p>

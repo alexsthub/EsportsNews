@@ -12,12 +12,13 @@ export default class GameContainer extends React.Component {
 
   render() {
     const gameList =
-      this.props.games.length > 0 ? (
-        this.props.games.map((game) => {
+      this.props.subscriptions.length > 0 ? (
+        this.props.subscriptions.map((game) => {
           return (
             <GameListing
               key={game.name}
               game={game}
+              articles={this.props.articles[game.id]}
               onClick={(e, game) => this.props.onClick(e, game)}
             />
           );

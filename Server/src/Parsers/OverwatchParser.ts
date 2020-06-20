@@ -13,7 +13,10 @@ function OverwatchNewsParser(): Data[] {
   function getImageUrl(article: HTMLAnchorElement): string {
     const imageDiv: HTMLDivElement = article.querySelector(".Card-thumbnail") as HTMLDivElement;
     const rawUrl: string = imageDiv.style.backgroundImage;
-    return rawUrl.substr(7, rawUrl.length - 9);
+    let imageUrl: string = rawUrl.substr(7, rawUrl.length - 9);
+    if (!imageUrl.startsWith("http")) imageUrl = "https://" + imageUrl;
+
+    return imageUrl;
   }
 
   let documents: Data[] = [];

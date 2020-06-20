@@ -12,11 +12,7 @@ import { GlobalStyles } from "./components/Themes/GlobalStyles";
 import { lightTheme, darkTheme } from "./components/Themes/Themes";
 /* global chrome */
 
-// TODO: Overwatch parser needs to put https:// in front of the imageurl if it does not exist
-
-// TODO: Put numbers and show if an article is new. Border?
-// TODO: Starts light theme then goes dark / takes time to load subscribed games... I need to put a loading somewhere!
-// TODO: Background script needs to read how many new ones there are.
+// TODO: Starts light theme then goes dark / takes time to load subscribed games... I need to put a loading somewhere
 export default class App extends React.Component {
   constructor(props) {
     super(props);
@@ -47,6 +43,23 @@ export default class App extends React.Component {
 
   handleGameClick = (e, gameObj) => {
     this.setState({ selectedGame: gameObj });
+  };
+
+  handleArticleClick = (e, article) => {
+    e.stopPropagation();
+    // window.open(article.link, "_blank");
+    // TODO: update local storage AND update num articles in background
+    const currentArticles = this.state.articles;
+    const currentGameArticles = currentArticles[article.game_id];
+
+    for (let i = 0; i < currentGameArticles.length; i++) {
+      const art = currentGameArticles[i];
+      if (art.id === article.id && article.visited === false) {
+        art.visited = true;
+        break;
+      }
+    }
+    this.setState({ articles: currentArticles });
   };
 
   calculateHeight = (element) => {
@@ -82,7 +95,11 @@ export default class App extends React.Component {
             unmountOnExit
             onEnter={this.calculateHeight}
           >
-            <GameContainer games={this.state.subscribedGames} onClick={this.handleGameClick} />
+            <GameContainer
+              subscriptions={this.state.subscribedGames}
+              articles={this.state.articles}
+              onClick={this.handleGameClick}
+            />
           </CSSTransition>
 
           <CSSTransition
@@ -98,6 +115,7 @@ export default class App extends React.Component {
                 this.state.selectedGame ? this.state.articles[this.state.selectedGame.id] : []
               }
               goBack={() => this.setState({ selectedGame: null })}
+              onClick={this.handleArticleClick}
             />
           </CSSTransition>
         </div>

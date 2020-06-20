@@ -4,11 +4,6 @@ import "../styles/ArticleStyle.css";
 import "../styles/App.css";
 
 export default class Article extends React.Component {
-  handleClick = (e, link) => {
-    e.stopPropagation();
-    window.open(link, "_blank");
-  };
-
   convertDate = (dateString) => {
     const date = new Date(dateString);
     const res =
@@ -33,8 +28,11 @@ export default class Article extends React.Component {
       <p className="article-description limit-text">{article.description}</p>
     ) : null;
 
+    let containerClass = "article hover-background";
+    if (!article.visited) containerClass = containerClass + " alert";
+
     return (
-      <div className="article hover-background" onClick={(e) => this.handleClick(e, article.link)}>
+      <div className={containerClass} onClick={(e) => this.props.onClick(e, article)}>
         {imageDiv}
         <div style={{ width: "100%" }}>
           <p className="article-title limit-text">{article.title}</p>
