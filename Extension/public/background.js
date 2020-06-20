@@ -1,6 +1,7 @@
 let numNewArticles = 0;
 chrome.browserAction.setBadgeBackgroundColor({ color: "#4688F1" });
 
+// TODO: When a new message comes in and you have all unread articles (4), the total count will be 5 but you cannot access the 5th.
 const connection = new WebSocket("ws://127.0.0.1:9000");
 connection.addEventListener("open", () => {
   chrome.storage.local.get(["subscriptions"], (result) => {
@@ -64,4 +65,12 @@ function sendUpdates(updates) {
     const messageStr = JSON.stringify(message);
     connection.send(messageStr);
   }
+}
+
+function decrementCount() {
+  const res = numNewArticles - 1;
+  numNewArticles = res;
+  if (res > 0) {
+    chrome.browserAction.setBadgeText({ text: String(res) });
+  } else chrome.browserAction.setBadgeText({ text: "" });
 }

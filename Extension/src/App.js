@@ -47,8 +47,6 @@ export default class App extends React.Component {
 
   handleArticleClick = (e, article) => {
     e.stopPropagation();
-    // window.open(article.link, "_blank");
-    // TODO: update local storage AND update num articles in background
     const currentArticles = this.state.articles;
     const currentGameArticles = currentArticles[article.game_id];
 
@@ -56,10 +54,13 @@ export default class App extends React.Component {
       const art = currentGameArticles[i];
       if (art.id === article.id && article.visited === false) {
         art.visited = true;
+        chrome.extension.getBackgroundPage().decrementCount();
+        chrome.storage.local.set({ articles: currentArticles });
+        this.setState({ articles: currentArticles });
         break;
       }
     }
-    this.setState({ articles: currentArticles });
+    window.open(article.link, "_blank");
   };
 
   calculateHeight = (element) => {

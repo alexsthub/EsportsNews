@@ -142,7 +142,7 @@ async function handleMessage(message: any, websocketObj: WebsocketServer) {
   websocketObj.broadcastToGroup(gameID, articlesToSendStr);
 }
 
-const recentArticles: ArticleStore = new ArticleStore(5);
+const recentArticles: ArticleStore = new ArticleStore(4);
 (async () => {
   const db: MySql.Connection = await getDatabaseConnection(true);
   const queryString: string = `
@@ -152,7 +152,7 @@ const recentArticles: ArticleStore = new ArticleStore(5);
     FROM 
       (SELECT *, @rank := IF(@current_gameid = game_id, @rank + 1, 1) as row_num, @current_gameid := game_id as current_game_id
       FROM articles order by game_id, date_published desc) ranked
-    WHERE row_num <= 5;`;
+    WHERE row_num <= 4;`;
   const response: any = await db.query(queryString);
   const rows: Article[] = response[0][2];
   rows.forEach((row: Article) => {
