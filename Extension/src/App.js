@@ -1,7 +1,6 @@
 import React, { createRef } from "react";
 import "./styles/App.css";
 
-import { CSSTransition } from "react-transition-group";
 import GameContainer from "./components/GameContainer";
 import GameDetails from "./components/GameDetails";
 import SettingsCog from "./components/Buttons/SettingsCog";
@@ -12,12 +11,10 @@ import { GlobalStyles } from "./components/Themes/GlobalStyles";
 import { lightTheme, darkTheme } from "./components/Themes/Themes";
 /* global chrome */
 
-// TODO: Starts light theme then goes dark / takes time to load subscribed games... I need to put a loading somewhere
 export default class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      height: null,
       subscribedGames: [],
       articles: {},
       selectedGame: null,
@@ -63,12 +60,6 @@ export default class App extends React.Component {
     window.open(article.link, "_blank");
   };
 
-  calculateHeight = (element) => {
-    const titleHeight = this.titleRef.current.offsetHeight;
-    const height = element.offsetHeight + titleHeight + 15;
-    this.setState({ height: height });
-  };
-
   switchTheme = () => {
     const result = this.state.theme === "light" ? "dark" : "light";
     this.setState({ theme: result });
@@ -76,49 +67,39 @@ export default class App extends React.Component {
   };
 
   render() {
+    let body;
+    if (this.state.selectedGame === null) {
+      body = (
+        <GameContainer
+          subscriptions={this.state.subscribedGames}
+          articles={this.state.articles}
+          onClick={this.handleGameClick}
+        />
+      );
+    } else {
+      body = (
+        <GameDetails
+          game={this.state.selectedGame}
+          articleList={
+            this.state.selectedGame ? this.state.articles[this.state.selectedGame.id] : []
+          }
+          goBack={() => this.setState({ selectedGame: null })}
+          onClick={this.handleArticleClick}
+        />
+      );
+    }
+
     return (
       <ThemeProvider theme={this.state.theme === "light" ? lightTheme : darkTheme}>
         <GlobalStyles />
-        <div
-          className="App"
-          style={{ height: this.state.height, width: this.state.selectedGame ? 300 : 200 }}
-        >
+        <div className="App" style={{ width: this.state.selectedGame ? 300 : 200 }}>
           <div style={{ position: "relative" }}>
             <h3 ref={this.titleRef}>ESports News</h3>
             <DarkModeIcon onClick={this.switchTheme} />
             <SettingsCog />
           </div>
 
-          <CSSTransition
-            in={this.state.selectedGame === null}
-            timeout={600}
-            classNames="primary"
-            unmountOnExit
-            onEnter={this.calculateHeight}
-          >
-            <GameContainer
-              subscriptions={this.state.subscribedGames}
-              articles={this.state.articles}
-              onClick={this.handleGameClick}
-            />
-          </CSSTransition>
-
-          <CSSTransition
-            in={this.state.selectedGame !== null}
-            timeout={600}
-            classNames="secondary"
-            unmountOnExit
-            onEnter={this.calculateHeight}
-          >
-            <GameDetails
-              game={this.state.selectedGame}
-              articleList={
-                this.state.selectedGame ? this.state.articles[this.state.selectedGame.id] : []
-              }
-              goBack={() => this.setState({ selectedGame: null })}
-              onClick={this.handleArticleClick}
-            />
-          </CSSTransition>
+          {body}
         </div>
       </ThemeProvider>
     );

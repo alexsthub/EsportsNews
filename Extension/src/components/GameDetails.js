@@ -7,7 +7,6 @@ import "../styles/App.css";
 
 import Article from "./Article";
 
-// TODO: Why do I render 3 times when I click?
 export default class GameDetails extends React.Component {
   render() {
     if (!this.props.game) return null;

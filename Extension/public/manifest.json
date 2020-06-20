@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "Esports News",
   "version": "0.0.1",
-  "description": "Stay up to date with the news/patch notes of your favorite games. Includes summaries.",
+  "description": "Stay up to date with the news/patch notes of your favorite games.",
   "default_locale": "en",
   "content_security_policy": "script-src 'self' https://ajax.googleapis.com; object-src 'self'",
   "browser_action": {
@@ -17,7 +17,7 @@
   },
   "background": {
     "scripts": ["background.js"],
-    "persistent": true
+    "persistent": false
   },
   "options_page": "options.html",
   "icons": {
@@ -28,7 +28,6 @@
   },
   "permissions": [
     "notifications",
-    "tabs",
     "storage"
   ]
 }
