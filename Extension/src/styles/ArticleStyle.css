@@ -1,0 +1,50 @@
+.article {
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  padding-left: 8px;
+  padding-right: 8px;
+  border-radius: 3px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.alert {
+  border: 1px solid red;
+  box-shadow: 2px 3px 3px rgba(255, 0, 0, 0.6);
+}
+
+.article-title {
+  font-size: 0.9rem;
+}
+
+.article-description {
+  font-size: 0.6rem;
+  color: gray;
+}
+
+.article-image {
+  height: 50px;
+  width: 50px;
+  border-radius: 3px;
+  padding-right: 8px;
+}
+
+.article-info {
+  justify-content: space-between;
+}
+
+.article-info p {
+  font-size: 0.7rem;
+  font-style: italic;
+}
+
+.limit-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}

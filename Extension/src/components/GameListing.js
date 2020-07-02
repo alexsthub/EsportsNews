@@ -1,16 +1,26 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-import "../App.css";
-
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
+import NotificationBell from "./NotificationBell";
+import "../styles/App.css";
 
 export default class GameListing extends React.Component {
+  calculateNumberNew(articles) {
+    let num = 0;
+    articles.forEach((article) => {
+      if (!article.visited) num += 1;
+    });
+    return num;
+  }
+
   render() {
+    const numberOfNewArticles = this.calculateNumberNew(this.props.articles);
+    const numAlert =
+      numberOfNewArticles > 0 ? <NotificationBell number={numberOfNewArticles} /> : null;
+
     return (
       <div
-        className="game-listing horizontal"
+        className="game-listing horizontal hover-background"
         onClick={(e) => this.props.onClick(e, this.props.game)}
       >
         <div className="horizontal align-center">
@@ -21,7 +31,7 @@ export default class GameListing extends React.Component {
           />
           <p className="game-title">{this.props.game.name}</p>
         </div>
-        {/* <FontAwesomeIcon className="listing-icon" icon={faChevronRight} /> */}
+        {numAlert}
       </div>
     );
   }
