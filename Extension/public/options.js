@@ -58,7 +58,6 @@ let subscribed = [];
 let unsubscribed = [];
 let changes = {};
 
-// TODO: When you save, we need to calculate number of new articles again. Otherwise when you delete, you might have the same number but you shouldn't.
 function getSubscribedGames() {
   chrome.storage.local.get(["subscriptions"], (result) => {
     const subscriptions = result.subscriptions;
@@ -172,10 +171,17 @@ const saveButton = $("div.save-button");
 saveButton.click((event) => {
   event.stopPropagation();
   if (saveButton.hasClass("button-active")) {
+    // TODO: When you save, we need to calculate number of new articles again. Otherwise when you delete, you might have the same number but you shouldn't.
     sendUpdatesToServer();
     changes = {};
     renderGames(subscribed, unsubscribed);
   }
+});
+
+const markButton = $("div.mark-read");
+markButton.click((event) => {
+  event.stopPropagation();
+  chrome.extension.getBackgroundPage().markAllRead();
 });
 
 getSubscribedGames();

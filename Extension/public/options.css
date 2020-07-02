@@ -93,3 +93,25 @@ h3 {
 .save-button p {
   margin: 0px;
 }
+
+.horizontal {
+  display: flex;
+  flex-direction: row;
+}
+
+.mark-read {
+  width: 50%;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  margin-left: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid black;
+  transition: background-color 0.3s ease;
+}
+
+.mark-read:hover {
+  cursor: pointer;
+  background-color: gray;
+}

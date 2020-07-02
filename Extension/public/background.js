@@ -74,3 +74,21 @@ function decrementCount() {
     chrome.browserAction.setBadgeText({ text: String(res) });
   } else chrome.browserAction.setBadgeText({ text: "" });
 }
+
+function markAllRead() {
+  chrome.storage.local.get(["articles", "subscriptions"], (result) => {
+    const articles = result.articles;
+    const subscriptions = result.subscriptions;
+    if (!articles || !subscriptions) return;
+    for (let i = 0; i < subscriptions.length; i++) {
+      const gameID = subscriptions[i];
+      const gameArticles = articles[gameID];
+      for (let j = 0; j < gameArticles.length; j++) {
+        const article = gameArticles[j];
+        article.visited = true;
+      }
+    }
+    chrome.storage.local.set({ articles: articles });
+    chrome.browserAction.setBadgeText({ text: "" });
+  });
+}
