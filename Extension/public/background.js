@@ -31,16 +31,15 @@ function updateLocalArticles(newArticles) {
     let currentArticles = result.articles;
     if (!currentArticles) currentArticles = {};
     Object.keys(newArticles).forEach((key) => {
-      numNewArticles += determineNewArticles(currentArticles[key], newArticles[key]);
+      determineNewArticles(currentArticles[key], newArticles[key]);
       currentArticles[key] = newArticles[key];
     });
     chrome.storage.local.set({ articles: currentArticles });
-    if (numNewArticles > 0) chrome.browserAction.setBadgeText({ text: String(numNewArticles) });
+    calculateNewArticles();
   });
 }
 
 function determineNewArticles(currentArticles, newArticles) {
-  let numNew = 0;
   newArticles.forEach((incoming) => {
     const existingArticle = currentArticles
       ? currentArticles.find((current) => current.id === incoming.id)
@@ -48,12 +47,10 @@ function determineNewArticles(currentArticles, newArticles) {
 
     if (!existingArticle || !existingArticle.visited) {
       incoming.visited = false;
-      numNew += 1;
     } else {
       incoming.visited = true;
     }
   });
-  return numNew;
 }
 
 function sendUpdates(updates) {
@@ -65,6 +62,27 @@ function sendUpdates(updates) {
     const messageStr = JSON.stringify(message);
     connection.send(messageStr);
   }
+}
+
+function calculateNewArticles() {
+  chrome.storage.local.get(["articles", "subscriptions"], (result) => {
+    let numberNew = 0;
+    const articles = result.articles;
+    const subscriptions = result.subscriptions;
+    if (!articles || !subscriptions) return;
+    for (let i = 0; i < subscriptions.length; i++) {
+      const gameID = subscriptions[i];
+      const gameArticles = articles[gameID];
+      if (!gameArticles) continue;
+      for (let j = 0; j < gameArticles.length; j++) {
+        const article = gameArticles[j];
+        if (!article.visited) numberNew = numberNew + 1;
+      }
+    }
+    const text = numberNew > 0 ? String(numberNew) : "";
+    chrome.browserAction.setBadgeText({ text: text });
+    numNewArticles = numberNew;
+  });
 }
 
 function decrementCount() {

@@ -157,6 +157,7 @@ function sendUpdatesToServer() {
   const subscribedIDs = subscribed.map((s) => s.id);
   chrome.storage.local.set({ subscriptions: subscribedIDs });
   chrome.extension.getBackgroundPage().sendUpdates(updates);
+  chrome.extension.getBackgroundPage().calculateNewArticles();
 }
 
 function existsInSubscriptions(subscribed, gameID) {
@@ -171,7 +172,6 @@ const saveButton = $("div.save-button");
 saveButton.click((event) => {
   event.stopPropagation();
   if (saveButton.hasClass("button-active")) {
-    // TODO: When you save, we need to calculate number of new articles again. Otherwise when you delete, you might have the same number but you shouldn't.
     sendUpdatesToServer();
     changes = {};
     renderGames(subscribed, unsubscribed);

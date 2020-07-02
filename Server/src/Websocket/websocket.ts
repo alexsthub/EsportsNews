@@ -133,6 +133,7 @@ class WebsocketServer {
 async function handleMessage(message: any, websocketObj: WebsocketServer) {
   const jsonString: string = message.Body;
   const articles: Article[] = JSON.parse(jsonString);
+  console.log("Handling messaging: " + articles);
   const gameID: number = articles[0].game_id;
   articles.forEach((article: Article) => {
     recentArticles.insert(article);
