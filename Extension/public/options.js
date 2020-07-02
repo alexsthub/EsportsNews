@@ -58,11 +58,12 @@ let subscribed = [];
 let unsubscribed = [];
 let changes = {};
 
+// TODO: When you save, we need to calculate number of new articles again. Otherwise when you delete, you might have the same number but you shouldn't.
 function getSubscribedGames() {
   chrome.storage.local.get(["subscriptions"], (result) => {
     const subscriptions = result.subscriptions;
     games.forEach((game) => {
-      if (subscriptions.includes(game.id)) {
+      if (subscriptions && subscriptions.includes(game.id)) {
         subscribed.push(game);
       } else {
         unsubscribed.push(game);

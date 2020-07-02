@@ -1,6 +1,7 @@
 let numNewArticles = 0;
 chrome.browserAction.setBadgeBackgroundColor({ color: "#4688F1" });
 
+// TODO: If connection does not work then we still want to calculate new articles?
 const connection = new WebSocket("ws://127.0.0.1:9000");
 connection.addEventListener("open", () => {
   chrome.storage.local.get(["subscriptions"], (result) => {

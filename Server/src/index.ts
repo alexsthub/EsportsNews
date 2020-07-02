@@ -35,14 +35,14 @@ exports.handler = async (event: any) => {
   console.log(`There are ${newArticles.length} new articles.`);
   if (newArticles.length > 0) {
     if (isOverwatchNews(requestMessage)) {
-      produceOverwatchDetailsMessagesToSQS(newArticles);
+      await produceOverwatchDetailsMessagesToSQS(newArticles);
     } else {
       const articles: ArticleResponse[] = await insertArticlesToDatabase(
         newArticles,
         requestMessage.gameID,
         db
       );
-      sendArticlesToWebsocketServer(articles);
+      await sendArticlesToWebsocketServer(articles);
     }
   }
   await db.end();

@@ -81,11 +81,12 @@ export function isOverwatchNews(requestMessage: any): boolean {
   return requestMessage.gameID === 6 && (!requestMessage.type || requestMessage.type === "news");
 }
 
-export function produceOverwatchDetailsMessagesToSQS(newArticles: Data[]): void {
+export async function produceOverwatchDetailsMessagesToSQS(newArticles: Data[]) {
   console.log("Sending overwatch details messages to SQS");
   AWS.config.update({ region: "us-west-2" });
   const sqs = new AWS.SQS();
-  newArticles.forEach((article: Data) => {
+  for (let i = 0; i < newArticles.length; i++) {
+    const article: Data = newArticles[i];
     const newMessage: any = {
       gameID: 6,
       type: "details",
@@ -98,28 +99,24 @@ export function produceOverwatchDetailsMessagesToSQS(newArticles: Data[]): void 
       DelaySeconds: 0,
       QueueUrl: "https://sqs.us-west-2.amazonaws.com/655373160788/articles",
     };
-
-    sqs.sendMessage(params, function (err: any, data: any) {
-      if (err) console.log(err);
-      else console.log(data);
-    });
-  });
+    let res = await sqs.sendMessage(params).promise();
+    console.log(res);
+  }
   return;
 }
 
-export function sendArticlesToWebsocketServer(newArticles: ArticleResponse[]): void {
+export async function sendArticlesToWebsocketServer(newArticles: ArticleResponse[]) {
   const sqs = new AWS.SQS();
 
   const message: string = JSON.stringify(newArticles);
-  console.log("Sending new article to websocket server");
+  console.log("Sending new articles to websocket server");
   console.log(message);
   const params: any = {
     MessageBody: message,
     DelaySeconds: 0,
     QueueUrl: process.env.websocketQueueUrl,
   };
-  sqs.sendMessage(params, function (err: any, _: any) {
-    if (err) console.log(err);
-  });
+  let res = await sqs.sendMessage(params).promise();
+  console.log(res);
   return;
 }
