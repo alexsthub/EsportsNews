@@ -22,11 +22,11 @@ class WebsocketServer {
     return this._server;
   }
 
-  public broadcastToGroup(gameID: number, articleString: string) {
+  public broadcastToGroup(gameID: number, messageStr: string) {
     const connections: any[] = this.gameToConnection.get(gameID);
     if (connections) {
       connections.forEach((connection) => {
-        connection.send(articleString);
+        connection.send(messageStr);
       });
     }
   }
@@ -132,15 +132,17 @@ class WebsocketServer {
 
 async function handleMessage(message: any, websocketObj: WebsocketServer) {
   const jsonString: string = message.Body;
+  console.log("Handling messaging: " + message.Body);
   const articles: Article[] = JSON.parse(jsonString);
-  console.log("Handling messaging: " + articles);
   const gameID: number = articles[0].game_id;
   articles.forEach((article: Article) => {
     recentArticles.insert(article);
   });
   const articlesToSend = recentArticles.getArticles().get(gameID);
-  const articlesToSendStr = JSON.stringify(articlesToSend);
-  websocketObj.broadcastToGroup(gameID, articlesToSendStr);
+  const messageObj: any = {};
+  messageObj[gameID] = articlesToSend;
+  const messageStr = JSON.stringify(messageObj);
+  websocketObj.broadcastToGroup(gameID, messageStr);
 }
 
 const recentArticles: ArticleStore = new ArticleStore(4);

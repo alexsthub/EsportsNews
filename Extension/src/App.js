@@ -24,7 +24,6 @@ export default class App extends React.Component {
   }
 
   componentDidMount = () => {
-    // TODO: Remove this. chrome.storage.local.remove(["articles"]);
     chrome.storage.local.get(["theme", "subscriptions", "articles"], (result) => {
       if (result.theme) this.setState({ theme: result.theme });
       if (result.articles) this.setState({ articles: result.articles });
