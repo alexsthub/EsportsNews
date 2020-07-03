@@ -4,7 +4,7 @@ import MySql from "mysql2/promise";
 import AWS from "aws-sdk";
 import { Article, ArticleStore } from "./ArticleStore";
 AWS.config.update({ region: "us-west-2" });
-import getDatabaseConnection from "../db/dbConnect";
+import getDatabaseConnection from "./dbConnect";
 
 class WebsocketServer {
   private nextID: number;
