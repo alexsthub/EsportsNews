@@ -2,7 +2,11 @@ import * as WebSocket from "ws";
 import * as SqsConsumer from "sqs-consumer";
 import AWS from "aws-sdk";
 import { Article, ArticleStore } from "./ArticleStore";
-AWS.config.update({ region: "us-west-2" });
+AWS.config.update({
+  region: "us-west-2",
+  accessKeyId: process.env.ACCESS_KEY,
+  secretAccessKey: process.env.SECRET_KEY,
+});
 import getDatabaseConnection from "./dbConnect";
 
 class WebsocketServer {
