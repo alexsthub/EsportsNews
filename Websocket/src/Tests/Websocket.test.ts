@@ -1,6 +1,5 @@
-import { Article, ArticleStore } from "../Websocket/ArticleStore";
+import { Article, ArticleStore } from "../ArticleStore";
 import * as iconv from "iconv-lite";
-import { insertArticlesToDatabase } from "../Helpers/PostScrapeHelpers";
 iconv.encodingExists("foo");
 
 describe("Article store", () => {

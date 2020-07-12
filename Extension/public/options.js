@@ -156,8 +156,10 @@ function sendUpdatesToServer() {
   }
   const subscribedIDs = subscribed.map((s) => s.id);
   chrome.storage.local.set({ subscriptions: subscribedIDs });
-  chrome.extension.getBackgroundPage().sendUpdates(updates);
-  chrome.extension.getBackgroundPage().calculateNewArticles();
+  chrome.runtime.getBackgroundPage((backgroundPage) => {
+    backgroundPage.sendUpdates(updates);
+    backgroundPage.calculateNewArticles();
+  });
 }
 
 function existsInSubscriptions(subscribed, gameID) {
@@ -171,6 +173,7 @@ function existsInSubscriptions(subscribed, gameID) {
 const saveButton = $("div.save-button");
 saveButton.click((event) => {
   event.stopPropagation();
+  console.log("SAVED");
   if (saveButton.hasClass("button-active")) {
     sendUpdatesToServer();
     changes = {};
@@ -181,7 +184,9 @@ saveButton.click((event) => {
 const markButton = $("div.mark-read");
 markButton.click((event) => {
   event.stopPropagation();
-  chrome.extension.getBackgroundPage().markAllRead();
+  chrome.runtime.getBackgroundPage((backgroundPage) => {
+    backgroundPage.markAllRead();
+  });
 });
 
 getSubscribedGames();

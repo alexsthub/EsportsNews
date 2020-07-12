@@ -1,10 +1,13 @@
 import * as WebSocket from "ws";
 import * as SqsConsumer from "sqs-consumer";
-import MySql from "mysql2/promise";
 import AWS from "aws-sdk";
 import { Article, ArticleStore } from "./ArticleStore";
-AWS.config.update({ region: "us-west-2" });
-import getDatabaseConnection from "../db/dbConnect";
+AWS.config.update({
+  region: "us-west-2",
+  accessKeyId: process.env.ACCESS_KEY,
+  secretAccessKey: process.env.SECRET_KEY,
+});
+import getDatabaseConnection from "./dbConnect";
 
 class WebsocketServer {
   private nextID: number;
@@ -147,7 +150,7 @@ async function handleMessage(message: any, websocketObj: WebsocketServer) {
 
 const recentArticles: ArticleStore = new ArticleStore(4);
 (async () => {
-  const db: MySql.Connection = await getDatabaseConnection(true);
+  const db = await getDatabaseConnection(true);
   const queryString: string = `
     set @rank = 0;
     set @current_gameid = 0;

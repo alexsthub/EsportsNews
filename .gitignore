@@ -5,3 +5,5 @@ build
 ./extension/*.crx
 ./extension/.DS_Store
 ./extension/.env
+deploy.sh
+build.sh
