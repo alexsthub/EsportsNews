@@ -50,7 +50,9 @@ export default class App extends React.Component {
       const art = currentGameArticles[i];
       if (art.id === article.id && article.visited === false) {
         art.visited = true;
-        chrome.extension.getBackgroundPage().decrementCount();
+        chrome.runtime.getBackgroundPage((page) => {
+          page.decrementCount();
+        });
         chrome.storage.local.set({ articles: currentArticles });
         this.setState({ articles: currentArticles });
         break;

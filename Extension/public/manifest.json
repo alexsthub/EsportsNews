@@ -1,6 +1,6 @@
 {
   "manifest_version": 2,
-  "name": "Esports News",
+  "name": "Official Game News",
   "version": "0.0.1",
   "description": "Stay up to date with the news/patch notes of your favorite games.",
   "default_locale": "en",
@@ -9,22 +9,22 @@
     "default_title": "Esports News",
     "default_popup": "index.html",
     "default_icon": {
-      "16": "icons/icon16.png",
-      "19": "icons/icon19.png",
-      "48": "icons/icon48.png",
-      "128": "icons/icon128.png"
+      "16": "icons/logo.png",
+      "19": "icons/logo.png",
+      "48": "icons/logo.png",
+      "128": "icons/logo.png"
     }
   },
   "background": {
     "scripts": ["background.js"],
-    "persistent": false
+    "persistent": true
   },
   "options_page": "options.html",
   "icons": {
-    "16": "icons/icon16.png",
-    "19": "icons/icon19.png",
-    "48": "icons/icon48.png",
-    "128": "icons/icon128.png"
+    "16": "icons/logo.png",
+    "19": "icons/logo.png",
+    "48": "icons/logo.png",
+    "128": "icons/logo.png"
   },
   "permissions": [
     "notifications",
