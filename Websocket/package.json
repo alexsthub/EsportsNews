@@ -4,7 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest --verbose"
+    "test": "jest --verbose",
+    "clean": "rm -rf ./dist/* ",
+    "build": "tsc",
+    "start": "node ./dist/index.js"
   },
   "keywords": [],
   "author": "",
@@ -16,7 +19,6 @@
   },
   "devDependencies": {
     "@types/jest": "^26.0.3",
-    "@types/mysql2": "github:types/mysql2",
     "@types/ws": "^7.2.6",
     "jest": "^26.1.0",
     "ts-jest": "^26.1.1",

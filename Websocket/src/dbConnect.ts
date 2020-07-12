@@ -11,7 +11,7 @@ export default async function getDatabaseConnection(multipleQueries?: boolean) {
     database: "news",
     multipleStatements: multipleStatements,
   };
-  let connection: MySql.Connection = await MySql.createConnection(config);
+  let connection = await MySql.createConnection(config);
   console.log("Connected!");
   return connection;
 }
