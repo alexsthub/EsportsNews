@@ -97,7 +97,7 @@ export async function produceOverwatchDetailsMessagesToSQS(newArticles: Data[]) 
     const params: any = {
       MessageBody: messageString,
       DelaySeconds: 0,
-      QueueUrl: "https://sqs.us-west-2.amazonaws.com/655373160788/articles",
+      QueueUrl: process.env.articlesQueueUrl,
     };
     let res = await sqs.sendMessage(params).promise();
     console.log(res);
