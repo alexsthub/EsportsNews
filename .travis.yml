@@ -9,7 +9,7 @@ notifications:
   email: false
 cache:
   directories:
-    - "./Server/node_modules"
+    - "./Websocket/node_modules"
 before_install:
   - cd Server
 install:
