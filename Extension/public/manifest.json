@@ -27,7 +27,6 @@
     "128": "icons/logo.png"
   },
   "permissions": [
-    "notifications",
     "storage"
   ]
 }
