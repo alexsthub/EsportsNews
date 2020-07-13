@@ -1,4 +1,4 @@
-# EsportsNews
+# Official Game News
 
 A chrome extension that allows users to select from a list of video games and get notifications of recent news or patch notes from their respective official sites.<br/>
 ![Details Screen](./Screenshots/Details.png)

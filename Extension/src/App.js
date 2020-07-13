@@ -95,7 +95,7 @@ export default class App extends React.Component {
         <GlobalStyles />
         <div className="App" style={{ width: this.state.selectedGame ? 300 : 200 }}>
           <div style={{ position: "relative" }}>
-            <h3 ref={this.titleRef}>ESports News</h3>
+            <h3 ref={this.titleRef}>Official Game News</h3>
             <DarkModeIcon onClick={this.switchTheme} />
             <SettingsCog />
           </div>

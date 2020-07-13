@@ -6,7 +6,7 @@
   "default_locale": "en",
   "content_security_policy": "script-src 'self' https://ajax.googleapis.com; object-src 'self'",
   "browser_action": {
-    "default_title": "Esports News",
+    "default_title": "Official Game News",
     "default_popup": "index.html",
     "default_icon": {
       "48": "icons/logo-48.png",
