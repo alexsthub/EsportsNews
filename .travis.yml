@@ -9,9 +9,9 @@ notifications:
   email: false
 cache:
   directories:
-    - "./Websocket/node_modules"
+    - "./Scraper/node_modules"
 before_install:
-  - cd Server
+  - cd Scraper
 install:
   - npm ci
 script:
