@@ -9,10 +9,9 @@
     "default_title": "Esports News",
     "default_popup": "index.html",
     "default_icon": {
-      "16": "icons/logo.png",
-      "19": "icons/logo.png",
-      "48": "icons/logo.png",
-      "128": "icons/logo.png"
+      "48": "icons/logo-48.png",
+      "72": "icons/logo-72.png",
+      "128": "icons/logo-128.png"
     }
   },
   "background": {
@@ -21,10 +20,9 @@
   },
   "options_page": "options.html",
   "icons": {
-    "16": "icons/logo.png",
-    "19": "icons/logo.png",
-    "48": "icons/logo.png",
-    "128": "icons/logo.png"
+    "48": "icons/logo-48.png",
+    "72": "icons/logo-72.png",
+    "128": "icons/logo-128.png"
   },
   "permissions": [
     "storage"
